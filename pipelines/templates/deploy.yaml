@@ -3,7 +3,6 @@ parameters:
     type: string
 
 stages:
-  # displayName: 'IaC Deploy'
   - stage: Validation
     displayName: Validate IaC
     jobs:
@@ -85,58 +84,58 @@ stages:
                 cd infrastructure/live/${{ parameters.environmentName }}/$(location)
                 ~/.tfenv/bin/terragrunt run-all apply --terragrunt-non-interactive -compact-warnings
 
-  - stage: DeployWhisper
-    displayName: Deploy Whisper
-    jobs:
-      - job: DeployContainer
-        steps:
-        - script: |
-            # Clone the Whisper repository
-            git clone https://github.com/openai/whisper.git
+  # - stage: DeployWhisper
+  #   displayName: Deploy Whisper
+  #   jobs:
+  #     - job: DeployContainer
+  #       steps:
+  #       - script: |
+  #           # Clone the Whisper repository
+  #           git clone https://github.com/openai/whisper.git
 
-            # Change to the Whisper directory
-            cd whisper
+  #           # Change to the Whisper directory
+  #           cd whisper
 
-            # Build the Docker image
-            docker build -t youracr.azurecr.io/whisper:latest .
+  #           # Build the Docker image
+  #           docker build -t youracr.azurecr.io/whisper:latest .
 
-            # Authenticate with Azure Container Registry
-            docker login youracr.azurecr.io -u $(ACR_USERNAME) -p $(ACR_PASSWORD)
+  #           # Authenticate with Azure Container Registry
+  #           docker login youracr.azurecr.io -u $(ACR_USERNAME) -p $(ACR_PASSWORD)
 
-            # Push the Docker image to Azure Container Registry
-            docker push youracr.azurecr.io/whisper:latest
+  #           # Push the Docker image to Azure Container Registry
+  #           docker push youracr.azurecr.io/whisper:latest
 
-          displayName: 'Build and Push Docker Image'
+  #         displayName: 'Build and Push Docker Image'
 
-        - task: AzureCLI@2
-          inputs:
-            azureSubscription: '$(service-connection)-${{ parameters.environmentName }}'
-            scriptType: 'bash'
-            scriptLocation: 'inlineScript'
-            inlineScript: |
-              # Define the inline script here
-              acr_image="youracr.azurecr.io/whisper:latest"
-              resource_group="YourResourceGroup"  # Replace with your resource group name
-              container_name="YourContainerInstance"  # Replace with your container instance name
-              location="YourAzureRegion"  # Replace with your desired Azure region
+  #       - task: AzureCLI@2
+  #         inputs:
+  #           azureSubscription: '$(service-connection)-${{ parameters.environmentName }}'
+  #           scriptType: 'bash'
+  #           scriptLocation: 'inlineScript'
+  #           inlineScript: |
+  #             # Define the inline script here
+  #             acr_image="youracr.azurecr.io/whisper:latest"
+  #             resource_group="YourResourceGroup"  # Replace with your resource group name
+  #             container_name="YourContainerInstance"  # Replace with your container instance name
+  #             location="YourAzureRegion"  # Replace with your desired Azure region
 
-              # Deploy the Azure Container Instance
-              az container create \
-                --resource-group $resource_group \
-                --name $container_name \
-                --image $acr_image \
-                --cpu 0.75 \
-                --memory 1.5Gi \
-                --registry-login-server youracr.azurecr.io \
-                --registry-username $(ACR_USERNAME) \
-                --registry-password $(ACR_PASSWORD) \
-                --dns-name-label yourdnslabel \
-                --ports 80
+  #             # Deploy the Azure Container Instance
+  #             az container create \
+  #               --resource-group $resource_group \
+  #               --name $container_name \
+  #               --image $acr_image \
+  #               --cpu 0.75 \
+  #               --memory 1.5Gi \
+  #               --registry-login-server youracr.azurecr.io \
+  #               --registry-username $(ACR_USERNAME) \
+  #               --registry-password $(ACR_PASSWORD) \
+  #               --dns-name-label yourdnslabel \
+  #               --ports 80
 
-              # Wait for the deployment to finish (adjust sleep time as needed)
-              sleep 60
+  #             # Wait for the deployment to finish (adjust sleep time as needed)
+  #             sleep 60
 
-              # Display container instance details
-              az container show --resource-group $resource_group --name $container_name --query "{FQDN:ipAddress.fqdn, State:instanceView.state}"
+  #             # Display container instance details
+  #             az container show --resource-group $resource_group --name $container_name --query "{FQDN:ipAddress.fqdn, State:instanceView.state}"
 
           displayName: 'Deploy to Azure Container Instance'
