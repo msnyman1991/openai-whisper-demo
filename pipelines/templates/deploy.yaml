@@ -3,8 +3,7 @@ parameters:
     type: string
 
 stages:
-
-displayName: 'Plan IaC'
+displayName: 'IaC Deploy'
   - stage: Validation
     displayName: Validate IaC
     jobs:
@@ -12,40 +11,77 @@ displayName: 'Plan IaC'
         displayName: Validate Terraform
         steps:
           - template: validate.yaml
-  - stage: PlanInfra
-    displayName: Plan IaC
+
+  - stage: Deploy
     jobs:
       - job: PlanTerraform
         steps:
           - template: install-terraform.yml
             - task: AzureCLI@2
               inputs:
-                azureSubscription: 'YourAzureServiceConnection'
+                azureSubscription: '$(service-connection)-${{ parameters.environmentName }}'
                 scriptType: 'bash'
                 scriptLocation: 'inlineScript'
                 inlineScript: |
                   echo "##### TERRGRUNT Plan ALL #####"
                   ## Clear Terragrunt cache
                   find infrastructure/ -type d -name '.terragrunt-cache' -prune -exec rm -rf {} +
-                  cd infrastructure/live/${{ parameters.environmentName }}/$(AWS.Region)
-                  ~/.tfenv/bin/terragrunt run-all plan --terragrunt-non-interactive -compact-warnings
+                  cd infrastructure/live/${{ parameters.environmentName }}/$(location)
+                  ~/.tfenv/bin/terragrunt run-all plan --out=tfplan --terragrunt-non-interactive -compact-warnings
 
-  - stage: ApplyInfra
-    displayName: Apply IaC
-    jobs:
+            - task: CopyFiles@2
+              displayName: Copy Terraform Plan files
+              inputs:
+                SourceFolder: infrastructure/live/${{ parameters.environmentName }}/$(location)
+                Contents: |
+                  **/*.tf
+                  **/*.tfvars
+                  **/*tfplan*
+                TargetFolder: '$(target)'
+
+            # Publish Artifacts:-
+            - task: PublishBuildArtifacts@1
+              displayName: Publish Terraform artifacts
+              inputs:
+                targetPath: '$(target)'
+                artifactName: '$(artifact)'
+
+      - job: ApproveTerraform
+        displayName: 'Terraform Approval'
+        dependsOn: terraform
+        pool: server
+        timeoutInMinutes: 30 #time out in 30 min
+        steps:
+          - task: ManualValidation@0
+            timeoutInMinutes: 30 #time out in 30 min
+            inputs:
+              instructions: 'Terraform will need approval'
+              onTimeout: 'reject'
+
+          # Download Artifacts:-
+          - task: DownloadBuildArtifacts@0
+            displayName: Download Terraform Artifacts
+            inputs:
+              buildType: 'current'
+              downloadType: 'single'
+              artifactName: '$(artifact)'
+              downloadPath: '$(System.ArtifactsDirectory)'
+
       - job: ApplyTerraform
+        displayName: 'Terraform Apply'
+        dependsOn: terraform_approval
         steps:
           - template: install-terraform.yml
             - task: AzureCLI@2
               inputs:
-                azureSubscription: 'YourAzureServiceConnection'
+                azureSubscription: '$(service-connection)-${{ parameters.environmentName }}'
                 scriptType: 'bash'
                 scriptLocation: 'inlineScript'
                 inlineScript: |
                   echo "##### TERRGRUNT Apply ALL #####"
                   ## Clear Terragrunt cache
                   find infrastructure/ -type d -name '.terragrunt-cache' -prune -exec rm -rf {} +
-                  cd infrastructure/live/${{ parameters.environmentName }}/$(AWS.Region)
+                  cd infrastructure/live/${{ parameters.environmentName }}/$(location)
                   ~/.tfenv/bin/terragrunt run-all apply --terragrunt-non-interactive -compact-warnings
 
   - stage: DeployWhisper
@@ -73,7 +109,7 @@ displayName: 'Plan IaC'
 
         - task: AzureCLI@2
           inputs:
-            azureSubscription: 'YourAzureServiceConnection'  # Replace with your Azure service connection name
+            azureSubscription: '$(service-connection)-${{ parameters.environmentName }}'
             scriptType: 'bash'
             scriptLocation: 'inlineScript'
             inlineScript: |

@@ -14,8 +14,12 @@ parameters:
       - "dev"
 
 variables:
-  - group: 
-
+  - group: tools-versions
+  - group: azure-variables
+  - name: target
+    value: $(build.artifactstagingdirectory)/terraform
+  - name: artifact
+    value: ${{ parameters.environmentName }} - Terraform
   
 stages:
   - template: templates/deploy.yaml
