@@ -72,16 +72,16 @@ stages:
               cd whisper
 
               # Build the Docker image
-              docker build -t youracr.azurecr.io/whisper:latest .
+              docker build -t whisper.azurecr.io/whisper:latest .
 
               # Authenticate with Azure Container Registry
-              docker login youracr.azurecr.io -u $(ACR_USERNAME) -p $(ACR_PASSWORD)
+              docker login whisper.azurecr.io -u $(ACR_USERNAME) -p $(ACR_PASSWORD)
 
               # Push the Docker image to Azure Container Registry
-              docker push youracr.azurecr.io/whisper:latest
+              docker push whisper.azurecr.io/whisper:latest
 
               # Publish Docker image as Azure DevOps Artifact
-              echo "##vso[artifact.upload containerfolder=/]youracr.azurecr.io/whisper:latest"
+              echo "##vso[artifact.upload containerfolder=/]whisper.azurecr.io/whisper:latest"
 
             displayName: 'Build and Push Docker Image'
 
@@ -92,10 +92,10 @@ stages:
             scriptLocation: 'inlineScript'
             inlineScript: |
               # Define the inline script here
-              acr_image="youracr.azurecr.io/whisper:latest"
-              resource_group="YourResourceGroup"  # Replace with your resource group name
-              container_name="YourContainerInstance"  # Replace with your container instance name
-              location="YourAzureRegion"  # Replace with your desired Azure region
+              acr_image="whisper.azurecr.io/whisper:latest"
+              resource_group="container-registries" # Replace with your resource group name
+              container_name="whisper" # Replace with your container instance name
+              location="$(location)" # Replace with your desired Azure region
 
               # Deploy the Azure Container Instance
               az container create \
@@ -104,10 +104,9 @@ stages:
                 --image $acr_image \
                 --cpu 0.75 \
                 --memory 1.5Gi \
-                --registry-login-server youracr.azurecr.io \
+                --registry-login-server whisper.azurecr.io \
                 --registry-username $(ACR_USERNAME) \
                 --registry-password $(ACR_PASSWORD) \
-                --dns-name-label yourdnslabel \
                 --ports 80
 
               # Wait for the deployment to finish (adjust sleep time as needed)
