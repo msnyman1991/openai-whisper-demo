@@ -138,4 +138,4 @@ stages:
   #             # Display container instance details
   #             az container show --resource-group $resource_group --name $container_name --query "{FQDN:ipAddress.fqdn, State:instanceView.state}"
 
-          displayName: 'Deploy to Azure Container Instance'
+  #         displayName: 'Deploy to Azure Container Instance'
