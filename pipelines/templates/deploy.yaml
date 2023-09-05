@@ -16,7 +16,7 @@ stages:
     jobs:
       - job: PlanTerraform
         steps:
-          - template: install-terraform.yml
+          - template: install-terraform.yaml
           - task: AzureCLI@2
             inputs:
               azureSubscription: '$(service-connection)-${{ parameters.environmentName }}'
@@ -71,7 +71,7 @@ stages:
         displayName: 'Terraform Apply'
         dependsOn: terraform_approval
         steps:
-          - template: install-terraform.yml
+          - template: install-terraform.yaml
           - task: AzureCLI@2
             inputs:
               azureSubscription: '$(service-connection)-${{ parameters.environmentName }}'
