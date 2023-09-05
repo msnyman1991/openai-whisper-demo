@@ -9,9 +9,12 @@ stages:
       - job: Validate
         displayName: Validate Terraform
         steps:
-          - template: validate.yaml
-            parameters:
-              environmentName: ${{ parameters.environmentName }}
+        - script: |
+            echo "hello"
+
+        #   - template: validate.yaml
+        #     parameters:
+        #       environmentName: ${{ parameters.environmentName }}
 
   # - stage: Deploy
   #   dependsOn: Validation
