@@ -98,18 +98,24 @@ stages:
               resource_group="container-registries" # Replace with your resource group name
               container_name="whisper" # Replace with your container instance name
               location="$(location)" # Replace with your desired Azure region
+              num_instances=3
 
               # Deploy the Azure Container Instance
-              az container create \
-                --resource-group $resource_group \
-                --name $container_name \
-                --image $acr_image \
-                --cpu 0.75 \
-                --memory 1.5Gi \
-                --registry-login-server whisper.azurecr.io \
-                --registry-username $(ACR_USERNAME) \
-                --registry-password $(ACR_PASSWORD) \
-                --ports 80
+              for ((i=1; i<=num_instances; i++)); do
+                container_name="whisper-$i" # Update the container name for each instance
+                az container create \
+                  --resource-group $resource_group \
+                  --name $container_name \
+                  --image $acr_image \
+                  --cpu 0.75 \
+                  --memory 1.5Gi \
+                  --registry-login-server whisper.azurecr.io \
+                  --registry-username $(ACR_USERNAME) \
+                  --registry-password $(ACR_PASSWORD) \
+                  --ports 80
+                  --vnet <your-vnet-name> \
+                  --subnet <your-subnet-name>
+              done
 
               # Wait for the deployment to finish (adjust sleep time as needed)
               sleep 60
