@@ -17,34 +17,34 @@ stages:
       - job: PlanTerraform
         steps:
           - template: install-terraform.yml
-            - task: AzureCLI@2
-              inputs:
-                azureSubscription: '$(service-connection)-${{ parameters.environmentName }}'
-                scriptType: 'bash'
-                scriptLocation: 'inlineScript'
-                inlineScript: |
-                  echo "##### TERRGRUNT Plan ALL #####"
-                  ## Clear Terragrunt cache
-                  find infrastructure/ -type d -name '.terragrunt-cache' -prune -exec rm -rf {} +
-                  cd infrastructure/live/${{ parameters.environmentName }}/$(location)
-                  ~/.tfenv/bin/terragrunt run-all plan --out=tfplan --terragrunt-non-interactive -compact-warnings
+          - task: AzureCLI@2
+            inputs:
+              azureSubscription: '$(service-connection)-${{ parameters.environmentName }}'
+              scriptType: 'bash'
+              scriptLocation: 'inlineScript'
+              inlineScript: |
+                echo "##### TERRGRUNT Plan ALL #####"
+                ## Clear Terragrunt cache
+                find infrastructure/ -type d -name '.terragrunt-cache' -prune -exec rm -rf {} +
+                cd infrastructure/live/${{ parameters.environmentName }}/$(location)
+                ~/.tfenv/bin/terragrunt run-all plan --out=tfplan --terragrunt-non-interactive -compact-warnings
 
-            - task: CopyFiles@2
-              displayName: Copy Terraform Plan files
-              inputs:
-                SourceFolder: infrastructure/live/${{ parameters.environmentName }}/$(location)
-                Contents: |
-                  **/*.tf
-                  **/*.tfvars
-                  **/*tfplan*
-                TargetFolder: '$(target)'
+          - task: CopyFiles@2
+            displayName: Copy Terraform Plan files
+            inputs:
+              SourceFolder: infrastructure/live/${{ parameters.environmentName }}/$(location)
+              Contents: |
+                **/*.tf
+                **/*.tfvars
+                **/*tfplan*
+              TargetFolder: '$(target)'
 
-            # Publish Artifacts:-
-            - task: PublishBuildArtifacts@1
-              displayName: Publish Terraform artifacts
-              inputs:
-                targetPath: '$(target)'
-                artifactName: '$(artifact)'
+          # Publish Artifacts:-
+          - task: PublishBuildArtifacts@1
+            displayName: Publish Terraform artifacts
+            inputs:
+              targetPath: '$(target)'
+              artifactName: '$(artifact)'
 
       - job: ApproveTerraform
         displayName: 'Terraform Approval'
