@@ -10,6 +10,8 @@ stages:
         displayName: Validate Terraform
         steps:
           - template: validate.yaml
+            parameters:
+              environmentName: ${{ parameters.environmentName }}
 
   - stage: Deploy
     jobs:
@@ -18,7 +20,7 @@ stages:
           - template: install-terraform.yaml
           - task: AzureCLI@2
             inputs:
-              azureSubscription: "$(service-connection)-${{ parameters.environmentName }}"
+              azureSubscription: '$(service-connection)-${{ parameters.environmentName }}'
               scriptType: 'bash'
               scriptLocation: 'inlineScript'
               inlineScript: |
@@ -74,7 +76,7 @@ stages:
 
           - task: AzureCLI@2
             inputs:
-              azureSubscription: "$(service-connection)-${{ parameters.environmentName }}"
+              azureSubscription: '$(service-connection)-${{ parameters.environmentName }}'
               scriptType: 'bash'
               scriptLocation: 'inlineScript'
               inlineScript: |
