@@ -10,6 +10,8 @@ stages:
         displayName: Validate Terraform
         steps:
           - template: validate.yaml
+            parameters:
+              environmentName: ${{ parameters.environmentName }}
 
   - stage: Deploy
     dependsOn: Validation
