@@ -58,6 +58,12 @@ stages:
               instructions: 'Terraform will need approval'
               onTimeout: 'reject'
 
+      - job: ApplyTerraform
+        displayName: 'Terraform Apply'
+        dependsOn: terraform_approval
+        steps:
+          - template: install-terraform.yaml
+
           # Download Artifacts:-
           - task: DownloadBuildArtifacts@0
             displayName: Download Terraform Artifacts
@@ -66,12 +72,7 @@ stages:
               downloadType: 'single'
               artifactName: '$(artifact)'
               downloadPath: '$(System.ArtifactsDirectory)'
-
-      - job: ApplyTerraform
-        displayName: 'Terraform Apply'
-        dependsOn: terraform_approval
-        steps:
-          - template: install-terraform.yaml
+              
           - task: AzureCLI@2
             inputs:
               azureSubscription: '$(service-connection)-${{ parameters.environmentName }}'
