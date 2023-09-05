@@ -13,7 +13,8 @@ stages:
             parameters:
               environmentName: ${{ parameters.environmentName }}
 
-  - stage: Deploy
+  - stage: DeployInfra
+    dependsOn: Validation
     jobs:
       - job: PlanTerraform
         steps:
@@ -87,6 +88,7 @@ stages:
                 ~/.tfenv/bin/terragrunt run-all apply --terragrunt-non-interactive -compact-warnings
 
   - stage: DeployWhisper
+    dependsOn: DeployInfra
     jobs:
       - job: Build
         steps:
