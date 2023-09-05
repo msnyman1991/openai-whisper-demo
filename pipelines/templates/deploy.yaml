@@ -31,7 +31,6 @@ stages:
                 ~/.tfenv/bin/terragrunt run-all plan --out=tfplan --terragrunt-non-interactive -compact-warnings
 
           - task: CopyFiles@2
-            dependsOn: PlanTerraform
             displayName: Copy Terraform Plan files
             inputs:
               SourceFolder: infrastructure/live/${{ parameters.environmentName }}/$(location)
@@ -111,8 +110,6 @@ stages:
           displayName: 'Build and Push Docker Image'
 
         - task: AzureCLI@2
-          dependsOn: Build
-          displayName: Deploy Whisper
           inputs:
             azureSubscription: '$(service-connection)-${{ parameters.environmentName }}'
             scriptType: 'bash'
