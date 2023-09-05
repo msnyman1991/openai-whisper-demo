@@ -33,10 +33,10 @@ stages:
         displayName: 'Terraform Approval'
         dependsOn: PlanTerraform
         pool: server
-        timeoutInMinutes: 30 #time out in 30 min
+        timeoutInMinutes: 30
         steps:
           - task: ManualValidation@0
-            timeoutInMinutes: 30 #time out in 30 min
+            timeoutInMinutes: 30
             inputs:
               instructions: 'Terraform will need approval'
               onTimeout: 'reject'
