@@ -3,17 +3,17 @@ parameters:
     type: string
 
 stages:
-  - stage: Deploy
+  # displayName: 'IaC Deploy'
+  - stage: Validation
     displayName: Validate IaC
     jobs:
       - job: Validate
         displayName: Validate Terraform
         steps:
           - template: validate.yaml
-            parameters:
-              environmentName: ${{ parameters.environmentName }}
 
-
+  - stage: Deploy
+    jobs:
       - job: PlanTerraform
         steps:
           - template: install-terraform.yaml
@@ -43,19 +43,9 @@ stages:
 
       - job: ApplyTerraform
         displayName: 'Terraform Apply'
-        dependsOn: ApproveTerraform
+        dependsOn: terraform_approval
         steps:
           - template: install-terraform.yaml
-
-          # Download Artifacts:-
-          - task: DownloadBuildArtifacts@0
-            displayName: Download Terraform Artifacts
-            inputs:
-              buildType: 'current'
-              downloadType: 'single'
-              artifactName: '$(artifact)'
-              downloadPath: '$(System.ArtifactsDirectory)'
-
           - task: AzureCLI@2
             inputs:
               azureSubscription: '$(service-connection)-${{ parameters.environmentName }}'
@@ -68,26 +58,32 @@ stages:
                 cd infrastructure/live/${{ parameters.environmentName }}/$(location)
                 ~/.tfenv/bin/terragrunt run-all apply --terragrunt-non-interactive -compact-warnings
 
-      - job: Build
+  - stage: DeployWhisper
+    displayName: Deploy Whisper
+    jobs:
+      - job: DeployContainer
         steps:
-        - template: install-docker.yaml
-        - script: |
-            # Clone the Whisper repository
-            git clone https://github.com/openai/whisper.git
+          - template: install-docker.yaml
+          - script: |
+              # Clone the Whisper repository
+              git clone https://github.com/openai/whisper.git
 
-            # Change to the Whisper directory
-            cd whisper
+              # Change to the Whisper directory
+              cd whisper
 
-            # Build the Docker image
-            docker build -t whisper.azurecr.io/whisper:latest .
+              # Build the Docker image
+              docker build -t youracr.azurecr.io/whisper:latest .
 
-            # Authenticate with Azure Container Registry
-            docker login whisper.azurecr.io -u $(ACR_USERNAME) -p $(ACR_PASSWORD)
+              # Authenticate with Azure Container Registry
+              docker login youracr.azurecr.io -u $(ACR_USERNAME) -p $(ACR_PASSWORD)
 
-            # Push the Docker image to Azure Container Registry
-            docker push whisper.azurecr.io/whisper:latest
+              # Push the Docker image to Azure Container Registry
+              docker push youracr.azurecr.io/whisper:latest
 
-          displayName: 'Build and Push Docker Image'
+              # Publish Docker image as Azure DevOps Artifact
+              echo "##vso[artifact.upload containerfolder=/]youracr.azurecr.io/whisper:latest"
+
+            displayName: 'Build and Push Docker Image'
 
         - task: AzureCLI@2
           inputs:
@@ -96,10 +92,10 @@ stages:
             scriptLocation: 'inlineScript'
             inlineScript: |
               # Define the inline script here
-              acr_image="whisper.azurecr.io/whisper:latest"
-              resource_group="container-registries"  # Replace with your resource group name
-              container_name="whisper"  # Replace with your container instance name
-              location="$(location)"  # Replace with your desired Azure region
+              acr_image="youracr.azurecr.io/whisper:latest"
+              resource_group="YourResourceGroup"  # Replace with your resource group name
+              container_name="YourContainerInstance"  # Replace with your container instance name
+              location="YourAzureRegion"  # Replace with your desired Azure region
 
               # Deploy the Azure Container Instance
               az container create \
@@ -108,9 +104,11 @@ stages:
                 --image $acr_image \
                 --cpu 0.75 \
                 --memory 1.5Gi \
-                --registry-login-server whisper.azurecr.io \
+                --registry-login-server youracr.azurecr.io \
                 --registry-username $(ACR_USERNAME) \
                 --registry-password $(ACR_PASSWORD) \
+                --dns-name-label yourdnslabel \
+                --ports 80
 
               # Wait for the deployment to finish (adjust sleep time as needed)
               sleep 60
