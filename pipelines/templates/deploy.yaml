@@ -3,7 +3,7 @@ parameters:
     type: string
 
 stages:
-  - stage: Validation
+  - stage: Deploy
     displayName: Validate IaC
     jobs:
       - job: Validate
@@ -13,9 +13,7 @@ stages:
             parameters:
               environmentName: ${{ parameters.environmentName }}
 
-  - stage: DeployInfra
-    dependsOn: Validation
-    jobs:
+
       - job: PlanTerraform
         steps:
           - template: install-terraform.yaml
@@ -30,23 +28,6 @@ stages:
                 find infrastructure/ -type d -name '.terragrunt-cache' -prune -exec rm -rf {} +
                 cd infrastructure/live/${{ parameters.environmentName }}/$(location)
                 ~/.tfenv/bin/terragrunt run-all plan --out=tfplan --terragrunt-non-interactive -compact-warnings
-
-          - task: CopyFiles@2
-            displayName: Copy Terraform Plan files
-            inputs:
-              SourceFolder: infrastructure/live/${{ parameters.environmentName }}/$(location)
-              Contents: |
-                **/*.tf
-                **/*.tfvars
-                **/*tfplan*
-              TargetFolder: '$(target)'
-
-          # Publish Artifacts:-
-          - task: PublishBuildArtifacts@1
-            displayName: Publish Terraform artifacts
-            inputs:
-              targetPath: '$(target)'
-              artifactName: '$(artifact)'
 
       - job: ApproveTerraform
         displayName: 'Terraform Approval'
@@ -87,9 +68,6 @@ stages:
                 cd infrastructure/live/${{ parameters.environmentName }}/$(location)
                 ~/.tfenv/bin/terragrunt run-all apply --terragrunt-non-interactive -compact-warnings
 
-  - stage: DeployWhisper
-    dependsOn: DeployInfra
-    jobs:
       - job: Build
         steps:
         - template: install-docker.yaml
