@@ -62,27 +62,27 @@ stages:
     jobs:
       - job: DeployContainer
         steps:
-          - template: install-docker.yaml
-          - script: |
-              # Clone the Whisper repository
-              git clone https://github.com/openai/whisper.git
+        - template: install-docker.yaml
+        - script: |
+            # Clone the Whisper repository
+            git clone https://github.com/openai/whisper.git
 
-              # Change to the Whisper directory
-              cd whisper
+            # Change to the Whisper directory
+            cd whisper
 
-              # Build the Docker image
-              docker build -t whisper.azurecr.io/whisper:latest .
+            # Build the Docker image
+            docker build -t whisper.azurecr.io/whisper:latest .
 
-              # Authenticate with Azure Container Registry
-              docker login whisper.azurecr.io -u $(ACR_USERNAME) -p $(ACR_PASSWORD)
+            # Authenticate with Azure Container Registry
+            docker login whisper.azurecr.io -u $(ACR_USERNAME) -p $(ACR_PASSWORD)
 
-              # Push the Docker image to Azure Container Registry
-              docker push whisper.azurecr.io/whisper:latest
+            # Push the Docker image to Azure Container Registry
+            docker push whisper.azurecr.io/whisper:latest
 
-              # Publish Docker image as Azure DevOps Artifact
-              echo "##vso[artifact.upload containerfolder=/]whisper.azurecr.io/whisper:latest"
+            # Publish Docker image as Azure DevOps Artifact
+            echo "##vso[artifact.upload containerfolder=/]whisper.azurecr.io/whisper:latest"
 
-            displayName: 'Build and Push Docker Image'
+          displayName: 'Build and Push Docker Image'
 
         - task: AzureCLI@2
           inputs:
