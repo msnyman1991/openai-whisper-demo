@@ -1,0 +1,29 @@
+steps:
+  - task: AzureCLI@2
+    displayName: Terraform Fmt
+    inputs:
+      azureSubscription: 'YourAzureServiceConnection'
+      scriptType: 'bash'
+      scriptLocation: 'inlineScript'
+      inlineScript: |
+        echo "##### TERRAFORM FMT #####"
+        cd infrastructure/tf-modules/
+        ~/.tfenv/bin/terraform fmt -diff -recursive -check
+        status=$?
+        if [ $status != 0 ]
+        then
+          echo "Terraform is Un-Formatted, Failing..."
+          exit 1
+        fi
+        echo "Congratulations terraform is correctly formatted"
+
+  - task: AzureCLI@2
+    displayName: Terragrunt HclFmt
+    inputs:
+      azureSubscription: 'YourAzureServiceConnection'
+      scriptType: 'bash'
+      scriptLocation: 'inlineScript'
+      inlineScript: |
+        echo "##### TERRAGRUNT HCLFMT #####"
+        cd infrastructure/live/
+        ~/.tfenv/bin/terragrunt hclfmt --terragrunt-check

@@ -22,10 +22,10 @@ remote_state {
     if_exists = "overwrite_terragrunt"
   }
   config = {
-    resource_group_name  = "tfstate"
-    storage_account_name = "terraform-stroage-account"
-    container_name       = "tfstate"
-    key                  = "terraform.tfstate"
+    resource_group_name  = "tfstate-dhyna"
+    storage_account_name = "terraformdhyna"
+    container_name       = "terraform-state-dhyna"
+    key                  = "${get_path_from_repo_root()}/terraform.tfstate"
   }
 }
 
@@ -34,7 +34,10 @@ generate "provider" {
   if_exists = "overwrite_terragrunt"
   contents  = <<EOF
 provider "azurerm" {
-  region = "westeurope" ## !!
+  features {}
+  skip_provider_registration = "true"
+}
+provider "random"{
 }
 EOF
 }

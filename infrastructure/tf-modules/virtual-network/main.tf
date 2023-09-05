@@ -1,10 +1,18 @@
+resource "random_string" "naming_convention" {
+  length  = 5
+  upper   = false
+  lower   = true
+  numeric = true
+  special = false
+}
+
 resource "azurerm_resource_group" "this" {
-  name     = var.resource_group_name
+  name     = "${var.resource_group_name}-${random_string.naming_convention.result}"
   location = var.location
 }
 
 resource "azurerm_virtual_network" "this" {
-  name                = var.virtual_network_name
+  name                = "${var.virtual_network_name}-${random_string.naming_convention.result}"
   address_space       = var.virtual_network_cidr
   location            = azurerm_resource_group.this.location
   resource_group_name = azurerm_resource_group.this.name
@@ -12,22 +20,22 @@ resource "azurerm_virtual_network" "this" {
 
 # Private Subnets
 resource "azurerm_subnet" "private" {
-  name                 = var.private_subnet_name
+  name                 = "${var.private_subnet_name}-${random_string.naming_convention.result}"
   resource_group_name  = azurerm_resource_group.this.name
   virtual_network_name = azurerm_virtual_network.this.name
-  address_prefixes     = var.priavte_address_prefixes
+  address_prefixes     = var.private_address_prefixes
 }
 
 # Public Subnets
 resource "azurerm_subnet" "public" {
-  name                 = var.public_subnet_name
+  name                 = "${var.public_subnet_name}-${random_string.naming_convention.result}"
   resource_group_name  = azurerm_resource_group.this.name
   virtual_network_name = azurerm_virtual_network.this.name
   address_prefixes     = var.public_address_prefixes
 }
 
 resource "azurerm_network_security_group" "public_nsg" {
-  name                = "public-nsg"
+  name                = "public-nsg-${random_string.naming_convention.result}"
   location            = azurerm_resource_group.this.location
   resource_group_name = azurerm_resource_group.this.name
 }

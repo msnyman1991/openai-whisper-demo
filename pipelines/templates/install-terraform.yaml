@@ -1,0 +1,15 @@
+steps:
+  - script: |
+      echo "##### INSTALL TERRAFORM #####"
+      git clone --depth=1 https://github.com/tfutils/tfenv.git ~/.tfenv
+      echo 'export PATH="$HOME/.tfenv/bin:$PATH"' >> ~/.bash_profile
+      mkdir -p ~/.local/bin/
+      . ~/.profile
+      ln -s ~/.tfenv/bin/* ~/.local/bin
+      tfenv use $(terraform-version)
+      echo "##### INSTALL TERRAGRUNT #####"
+      wget https://raw.githubusercontent.com/warrensbox/tgswitch/release/install.sh
+      chmod +x ./install.sh
+      ./install.sh -b ~/.tfenv/bin/
+      ~/.tfenv/bin//tgswitch --bin=/home/vsts/.tfenv/bin/terragrunt $(terragrunt-version)
+    displayName: Terraform & Terragrunt Install

@@ -7,5 +7,8 @@ include "region" {
 }
 
 include "env" {
-  path = "${get_terragrunt_dir()}/../../../../_env/whisper-openapi/aci.hcl"
+  path = "${get_terragrunt_dir()}/../../../../_env/container-registry/whisper.hcl"
+}
+
+inputs = {
 }

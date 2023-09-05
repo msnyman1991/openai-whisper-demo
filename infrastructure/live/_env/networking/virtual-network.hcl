@@ -1,5 +1,5 @@
 terraform {
-  source = "../../../../tf-modules/virtual-network"
+  source = "../../../../../tf-modules//virtual-network"
 }
 
 locals {
@@ -7,7 +7,7 @@ locals {
 }
 
 inputs = {
-  location             = local.env_vars.locals.env
+  location             = local.env_vars.locals.region
   resource_group_name  = "networking"
   virtual_network_name = "whisper-network"
   public_subnet_name   = "public-subnet"

@@ -1,0 +1,23 @@
+name: "Whisper Openapi Deploy ${{ parameters.environmentName }}"
+
+trigger:
+  - main
+
+pool:
+  vmImage: ubuntu-latest
+
+parameters:
+  - name: environmentName
+    type: string
+    default: "dev"
+    values:
+      - "dev"
+
+variables:
+  - group: 
+
+  
+stages:
+  - template: templates/deploy.yaml
+    parameters:
+      environmentName: ${{ parameters.environmentName }}
