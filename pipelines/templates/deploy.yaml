@@ -48,7 +48,7 @@ stages:
 
       - job: ApproveTerraform
         displayName: 'Terraform Approval'
-        dependsOn: terraform
+        dependsOn: PlanTerraform
         pool: server
         timeoutInMinutes: 30 #time out in 30 min
         steps:
