@@ -90,7 +90,7 @@ stages:
     jobs:
       - job: Build
         steps:
-        - template: install-docker
+        - template: install-docker.yaml
         - script: |
             # Clone the Whisper repository
             git clone https://github.com/openai/whisper.git
