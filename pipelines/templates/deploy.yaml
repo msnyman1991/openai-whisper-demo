@@ -14,7 +14,7 @@ stages:
   #             environmentName: ${{ parameters.environmentName }}
 
   - stage: Deploy
-    dependsOn: Validation
+    # dependsOn: Validation
     jobs:
       - job: PlanTerraform
         steps:
