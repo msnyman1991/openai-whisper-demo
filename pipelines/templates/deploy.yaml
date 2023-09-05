@@ -12,6 +12,7 @@ stages:
           - template: validate.yaml
 
   - stage: Deploy
+    dependsOn: Validation
     jobs:
       - job: PlanTerraform
         steps:
@@ -30,7 +31,6 @@ stages:
 
       - job: ApproveTerraform
         displayName: 'Terraform Approval'
-        dependsOn: PlanTerraform
         pool: server
         timeoutInMinutes: 30
         steps:
@@ -42,7 +42,7 @@ stages:
 
       - job: ApplyTerraform
         displayName: 'Terraform Apply'
-        dependsOn: terraform_approval
+        dependsOn: ApproveTerraform
         steps:
           - template: install-terraform.yaml
           - task: AzureCLI@2
@@ -58,6 +58,7 @@ stages:
                 ~/.tfenv/bin/terragrunt run-all apply --terragrunt-non-interactive -compact-warnings
 
   - stage: DeployWhisper
+    dependsOn: Deploy
     displayName: Deploy Whisper
     jobs:
       - job: DeployContainer
