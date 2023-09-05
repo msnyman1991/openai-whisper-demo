@@ -2,7 +2,7 @@ steps:
   - task: AzureCLI@2
     displayName: Terraform Fmt
     inputs:
-      azureSubscription: 'YourAzureServiceConnection'
+      azureSubscription: '$(service-connection)-${{ parameters.environmentName }}'
       scriptType: 'bash'
       scriptLocation: 'inlineScript'
       inlineScript: |
@@ -20,7 +20,7 @@ steps:
   - task: AzureCLI@2
     displayName: Terragrunt HclFmt
     inputs:
-      azureSubscription: 'YourAzureServiceConnection'
+      azureSubscription: '$(service-connection)-${{ parameters.environmentName }}'
       scriptType: 'bash'
       scriptLocation: 'inlineScript'
       inlineScript: |
