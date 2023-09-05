@@ -72,17 +72,17 @@ stages:
         dependsOn: terraform_approval
         steps:
           - template: install-terraform.yml
-            - task: AzureCLI@2
-              inputs:
-                azureSubscription: '$(service-connection)-${{ parameters.environmentName }}'
-                scriptType: 'bash'
-                scriptLocation: 'inlineScript'
-                inlineScript: |
-                  echo "##### TERRGRUNT Apply ALL #####"
-                  ## Clear Terragrunt cache
-                  find infrastructure/ -type d -name '.terragrunt-cache' -prune -exec rm -rf {} +
-                  cd infrastructure/live/${{ parameters.environmentName }}/$(location)
-                  ~/.tfenv/bin/terragrunt run-all apply --terragrunt-non-interactive -compact-warnings
+          - task: AzureCLI@2
+            inputs:
+              azureSubscription: '$(service-connection)-${{ parameters.environmentName }}'
+              scriptType: 'bash'
+              scriptLocation: 'inlineScript'
+              inlineScript: |
+                echo "##### TERRGRUNT Apply ALL #####"
+                ## Clear Terragrunt cache
+                find infrastructure/ -type d -name '.terragrunt-cache' -prune -exec rm -rf {} +
+                cd infrastructure/live/${{ parameters.environmentName }}/$(location)
+                ~/.tfenv/bin/terragrunt run-all apply --terragrunt-non-interactive -compact-warnings
 
   - stage: DeployWhisper
     displayName: Deploy Whisper
