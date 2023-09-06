@@ -18,4 +18,5 @@ inputs = {
   port                        = "9000"
   cpu_cores                   = "1"
   memory_in_gb                = "2"
+  containers                  = "3"
 }

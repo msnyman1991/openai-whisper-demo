@@ -67,3 +67,6 @@ variable "acr_password" {
 variable "acr_servername" {
   type = string
 }
+
+variable "containers" {
+}
