@@ -101,68 +101,21 @@ stages:
                 cd infrastructure/live/${{ parameters.environmentName }}/$(location)
                 ~/.tfenv/bin/terragrunt run-all apply --terragrunt-non-interactive -compact-warnings
 
-  # - stage: DeployWhisper
-  #   dependsOn: Deploy
-  #   displayName: Deploy Whisper
-  #   jobs:
-  #     - job: DeployContainer
-  #       steps:
-  #       - template: install-docker.yaml
-  #       - script: |
-  #           # Clone the Whisper repository
-  #           git clone https://github.com/openai/whisper.git
-
-  #           # Change to the Whisper directory
-  #           cd whisper
-
-  #           # Build the Docker image
-  #           docker build -t whisper.azurecr.io/whisper:latest .
-
-  #           # Authenticate with Azure Container Registry
-  #           docker login whisper.azurecr.io -u $(ACR_USERNAME) -p $(ACR_PASSWORD)
-
-  #           # Push the Docker image to Azure Container Registry
-  #           docker push whisper.azurecr.io/whisper:latest
-
-  #           # Publish Docker image as Azure DevOps Artifact
-  #           echo "##vso[artifact.upload containerfolder=/]whisper.azurecr.io/whisper:latest"
-
-  #         displayName: 'Build and Push Docker Image'
-
-  #       - task: AzureCLI@2
-  #         inputs:
-  #           azureSubscription: '$(service-connection)-${{ parameters.environmentName }}'
-  #           scriptType: 'bash'
-  #           scriptLocation: 'inlineScript'
-  #           inlineScript: |
-  #             # Define the inline script here
-  #             acr_image="whisper.azurecr.io/whisper:latest"
-  #             resource_group="container-registries" # Replace with your resource group name
-  #             container_name="whisper" # Replace with your container instance name
-  #             location="$(location)" # Replace with your desired Azure region
-  #             num_instances=3
-
-  #             # Deploy the Azure Container Instance
-  #             for ((i=1; i<=num_instances; i++)); do
-  #               container_name="whisper-$i" # Update the container name for each instance
-  #               az container create \
-  #                 --resource-group $resource_group \
-  #                 --name $container_name \
-  #                 --image $acr_image \
-  #                 --cpu 0.75 \
-  #                 --memory 1.5Gi \
-  #                 --registry-login-server whisper.azurecr.io \
-  #                 --registry-username $(ACR_USERNAME) \
-  #                 --registry-password $(ACR_PASSWORD) \
-  #                 --ports 80
-  #                 --vnet <your-vnet-name> \
-  #                 --subnet <your-subnet-name>
-  #             done
-
-  #             # Wait for the deployment to finish (adjust sleep time as needed)
-  #             sleep 60
-
-  #             # Display container instance details
-  #             az container show --resource-group $resource_group --name $container_name --query "{FQDN:ipAddress.fqdn, State:instanceView.state}"
-
-  #         displayName: 'Deploy to Azure Container Instance'
+  - stage: DeployWhisper
+    dependsOn: Deploy
+    jobs:
+      - job: InstallPython
+        steps:
+          - task: UsePythonVersion@0
+            inputs:
+              versionSpec: '3.x'
+              addToPath: true
+      - job: DockerBuildWhisper
+        steps:
+          - task: Docker@2
+            inputs:
+              containerRegistry: 'whisper-azure-container-registry'
+              repository: 'whisperujwrf.azurecr.io/whisper-image:latest'
+              command: 'buildAndPush'
+              Dockerfile: 'app/Dockerfile'
+              tags: 'latest'
