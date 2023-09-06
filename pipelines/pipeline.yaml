@@ -32,7 +32,6 @@ variables:
     value: $(build.artifactstagingdirectory)/terraform
   - name: artifact
     value: ${{ parameters.environmentName }} - Terraform
-  - group: acr-credentials
   
 stages:
   - template: templates/deploy.yaml
