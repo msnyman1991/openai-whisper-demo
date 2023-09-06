@@ -9,6 +9,7 @@ stages:
       - job: Validate
         displayName: Validate Terraform
         steps:
+          - template: install-terraform.yaml    
           - template: validate.yaml
             parameters:
               environmentName: ${{ parameters.environmentName }}
