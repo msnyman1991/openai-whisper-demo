@@ -103,7 +103,7 @@ stages:
   #               ~/.tfenv/bin/terragrunt run-all apply --terragrunt-non-interactive -compact-warnings
 
   - stage: DeployWhisper
-    dependsOn: Deploy
+    # dependsOn: Deploy
     jobs:
       - job: InstallPython
         steps:
