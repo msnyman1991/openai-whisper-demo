@@ -7,17 +7,41 @@ stages:
     displayName: Validate IaC
     jobs:
       - job: Validate
-        displayName: Validate Terraform
+        displayName: Validate Terragrunt
         steps:
           - template: install-terraform.yaml    
           - template: validate.yaml
             parameters:
               environmentName: ${{ parameters.environmentName }}
 
-  - stage: TerraformPlan
+  - stage: TerragruntBootstrap
     dependsOn: Validation
     jobs:
-      - job: PlanTerraform
+      - job: BootstrapTerragrunt
+        steps:
+          - template: install-terraform.yaml
+          - task: AzureCLI@2
+            inputs:
+              azureSubscription: '$(service-connection)-${{ parameters.environmentName }}'
+              scriptType: 'bash'
+              addSpnToEnvironment: true
+              scriptLocation: 'inlineScript'
+              inlineScript: |
+                subscriptionId=$(az account show --query "id" -o tsv)
+
+                export ARM_CLIENT_ID=$servicePrincipalId
+                export ARM_CLIENT_SECRET=$servicePrincipalKey
+                export ARM_TENANT_ID=$tenantId
+                export ARM_SUBSCRIPTION_ID=$subscriptionId
+
+                echo "##### TERRGRUNT Bootstrap #####"
+                cd infrastructure/tf-bootstrap
+                ~/.tfenv/bin/terraform apply -auto-approve
+
+  - stage: TerragruntPlan
+    dependsOn: Validation
+    jobs:
+      - job: PlanTerragrunt
         steps:
           - template: install-terraform.yaml
           - task: AzureCLI@2
@@ -41,22 +65,22 @@ stages:
                 ~/.tfenv/bin/terragrunt run-all plan --out=tfplan --terragrunt-non-interactive -compact-warnings
 
   - stage: Deploy
-    dependsOn: TerraformPlan
+    dependsOn: TerragruntPlan
     jobs:
-      - job: ApproveTerraform
-        displayName: 'Terraform Approval'
+      - job: ApproveTerragrunt
+        displayName: 'Terragrunt Approval'
         pool: server
         timeoutInMinutes: 30
         steps:
           - task: ManualValidation@0
             timeoutInMinutes: 30
             inputs:
-              instructions: 'Terraform will need approval'
+              instructions: 'Terragrunt will need approval'
               onTimeout: 'reject'
     
-      - job: ApplyTerraform
-        displayName: 'Terraform Apply'
-        dependsOn: ApproveTerraform
+      - job: TerragruntApply
+        displayName: 'Terragrunt Apply'
+        dependsOn: ApproveTerragrunt
         steps:
           - template: install-terraform.yaml
           - task: AzureCLI@2
