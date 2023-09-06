@@ -39,6 +39,7 @@ stages:
 
   - stage: Approval
     dependsOn: TerraformPlan
+    jobs:
       - job: ApproveTerraform
         displayName: 'Terraform Approval'
         pool: server
@@ -52,6 +53,7 @@ stages:
 
   - stage: TerraformDeploy
     dependsOn: Approval
+    jobs:
       - job: ApplyTerraform
         displayName: 'Terraform Apply'
         dependsOn: ApproveTerraform
