@@ -155,9 +155,22 @@ stages:
                   new_acr_server="$(ACR_SERVER)"
 
                   # Set the values in the terragrunt.hcl file
-                  sed -i "s/acr_username = .*/acr_username = \"$new_acr_username\"/" infrastructure/live/_env/aci/whisper.hcl
-                  sed -i "s/acr_password = .*/acr_password = \"$new_acr_password\"/" infrastructure/live/_env/aci/whisper.hcl
-                  sed -i "s/acr_server = .*/acr_server = \"$new_acr_server\"/" infrastructure/live/_env/aci/whisper.hcl
+                  cat <<EOF > infrastructure/live/_env/aci/whisper.hcl
+                  terraform {
+                    source = "../../../../../tf-modules//aci"
+                  }
+
+                  locals {
+                    env_vars = read_terragrunt_config(find_in_parent_folders("region.hcl"))
+                  }
+
+                  inputs = {
+                    resource_group_location = local.env_vars.locals.region
+                    acr_username            = "$new_acr_username"
+                    acr_password            = "$new_acr_password"
+                    acr_server              = "$new_acr_server"
+                  }
+                  EOF
 
                   cd infrastructure/live/${{ parameters.environmentName }}/$(location)/aci/whisper
                   ~/.tfenv/bin/terragrunt apply -auto-approve --terragrunt-non-interactive -compact-warnings
