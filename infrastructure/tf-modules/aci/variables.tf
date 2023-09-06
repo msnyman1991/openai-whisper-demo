@@ -55,3 +55,15 @@ variable "restart_policy" {
     error_message = "The restart_policy must be one of the following: Always, Never, OnFailure."
   }
 }
+
+variable "acr_username" {
+  type = string
+}
+
+variable "acr_password" {
+  type = string
+}
+
+variable "acr_servername" {
+  type = string
+}

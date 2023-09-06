@@ -23,9 +23,9 @@ resource "azurerm_container_group" "container" {
   restart_policy      = var.restart_policy
 
   image_registry_credential {
-    username = "whisperujwrf"
-    password = "l7oTn8ivAfCXaCyHpELO2mGEva+ep07qEVpTiPXD0N+ACRAXSoYJ"
-    server   = "whisperujwrf.azurecr.io"
+    username = var.acr_username
+    password = var.acr_password
+    server   = var.acr_servername
   }
 
   container {

@@ -13,9 +13,21 @@ parameters:
     values:
       - "dev"
 
+  - name: infra_components
+    type: object
+    default:
+      - container-registry
+      - networking
+
+  - name: app_components
+    type: object
+    default:
+      - whisper
+
 variables:
   - group: tools-versions
   - group: azure-variables
+  - group: acr-credentials
   - name: target
     value: $(build.artifactstagingdirectory)/terraform
   - name: artifact

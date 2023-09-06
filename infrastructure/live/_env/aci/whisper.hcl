@@ -8,4 +8,7 @@ locals {
 
 inputs = {
   resource_group_location = local.env_vars.locals.region
+  acr_username            = ""
+  acr_password            = ""
+  acr_server              = ""
 }
