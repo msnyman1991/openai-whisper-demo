@@ -12,7 +12,7 @@ resource "azurerm_resource_group" "this" {
 }
 
 resource "azurerm_container_registry" "this" {
-  name                = "${var.container-registry-name}${random_string.naming_convention.result}"
+  name                = "${var.container-registry-name}"
   resource_group_name = azurerm_resource_group.this.name
   location            = var.location
   sku                 = "Standard"
