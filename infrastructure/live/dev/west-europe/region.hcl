@@ -23,7 +23,7 @@ remote_state {
   }
   config = {
     resource_group_name  = "tfstate"
-    storage_account_name = "terraformstate"
+    storage_account_name = "terraformstatewhisper"
     container_name       = "terraform-state"
     key                  = "${get_path_from_repo_root()}/terraform.tfstate"
   }
