@@ -14,7 +14,7 @@ stages:
             parameters:
               environmentName: ${{ parameters.environmentName }}
 
-  - stage: Deploy
+  - stage: TerraformPlan
     dependsOn: Validation
     jobs:
       - job: PlanTerraform
@@ -24,14 +24,21 @@ stages:
             inputs:
               azureSubscription: '$(service-connection)-${{ parameters.environmentName }}'
               scriptType: 'bash'
+              addSpnToEnvironment: true
               scriptLocation: 'inlineScript'
               inlineScript: |
+                export ARM_CLIENT_ID=$servicePrincipalId
+                export ARM_CLIENT_SECRET=$servicePrincipalKey
+                export ARM_TENANT_ID=$tenantId
+
                 echo "##### TERRGRUNT Plan ALL #####"
                 ## Clear Terragrunt cache
                 find infrastructure/ -type d -name '.terragrunt-cache' -prune -exec rm -rf {} +
                 cd infrastructure/live/${{ parameters.environmentName }}/$(location)
                 ~/.tfenv/bin/terragrunt run-all plan --out=tfplan --terragrunt-non-interactive -compact-warnings
 
+  - stage: Approval
+    dependsOn: TerraformPlan
       - job: ApproveTerraform
         displayName: 'Terraform Approval'
         pool: server
@@ -43,6 +50,8 @@ stages:
               instructions: 'Terraform will need approval'
               onTimeout: 'reject'
 
+  - stage: TerraformDeploy
+    dependsOn: Approval
       - job: ApplyTerraform
         displayName: 'Terraform Apply'
         dependsOn: ApproveTerraform
@@ -52,8 +61,13 @@ stages:
             inputs:
               azureSubscription: '$(service-connection)-${{ parameters.environmentName }}'
               scriptType: 'bash'
+              addSpnToEnvironment: true
               scriptLocation: 'inlineScript'
               inlineScript: |
+                export ARM_CLIENT_ID=$servicePrincipalId
+                export ARM_CLIENT_SECRET=$servicePrincipalKey
+                export ARM_TENANT_ID=$tenantId
+
                 echo "##### TERRGRUNT Apply ALL #####"
                 ## Clear Terragrunt cache
                 find infrastructure/ -type d -name '.terragrunt-cache' -prune -exec rm -rf {} +
