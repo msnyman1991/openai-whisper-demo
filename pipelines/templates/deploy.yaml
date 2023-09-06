@@ -49,7 +49,7 @@ stages:
           - template: install-terraform.yaml
           - ${{ each infraComponent in parameters.infraComponents }}:
             - task: AzureCLI@2
-              displayName: Plan ${{ parameters.infraComponents }}
+              displayName: Plan ${{ infraComponent }}
               inputs:
                 azureSubscription: '$(service-connection)-${{ parameters.environmentName }}'
                 scriptType: 'bash'
@@ -90,7 +90,7 @@ stages:
           - template: install-terraform.yaml
           - ${{ each infraComponent in parameters.infraComponents }}:
             - task: AzureCLI@2
-              displayName: Apply ${{ parameters.infraComponents }}
+              displayName: Apply ${{ infraComponent }}
               inputs:
                 azureSubscription: '$(service-connection)-${{ parameters.environmentName }}'
                 scriptType: 'bash'
