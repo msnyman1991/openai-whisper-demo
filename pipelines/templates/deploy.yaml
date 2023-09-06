@@ -15,7 +15,6 @@ stages:
               environmentName: ${{ parameters.environmentName }}
 
   - stage: TerragruntBootstrap
-    dependsOn: Validation
     jobs:
       - job: BootstrapTerragrunt
         steps:
