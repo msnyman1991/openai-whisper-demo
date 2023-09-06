@@ -29,6 +29,7 @@ resource "azurerm_container_group" "container" {
   }
 
   container {
+    count = 3
     name   = var.container_name_prefix
     image  = var.image
     cpu    = var.cpu_cores
