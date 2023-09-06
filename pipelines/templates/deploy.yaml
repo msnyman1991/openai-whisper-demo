@@ -37,7 +37,7 @@ stages:
                 cd infrastructure/live/${{ parameters.environmentName }}/$(location)
                 ~/.tfenv/bin/terragrunt run-all plan --out=tfplan --terragrunt-non-interactive -compact-warnings
 
-  - stage: Approval
+  - stage: Deploy
     dependsOn: TerraformPlan
     jobs:
       - job: ApproveTerraform
@@ -50,11 +50,9 @@ stages:
             inputs:
               instructions: 'Terraform will need approval'
               onTimeout: 'reject'
-
-  - stage: TerraformDeploy
-    dependsOn: Approval
-    jobs:
+    
       - job: ApplyTerraform
+        dependsOn: Approval
         displayName: 'Terraform Apply'
         dependsOn: ApproveTerraform
         steps:
