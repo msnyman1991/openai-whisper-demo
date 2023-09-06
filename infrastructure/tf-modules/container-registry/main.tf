@@ -16,4 +16,6 @@ resource "azurerm_container_registry" "this" {
   resource_group_name = azurerm_resource_group.this.name
   location            = var.location
   sku                 = "Standard"
+
+  admin_enabled = false
 }
