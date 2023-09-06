@@ -139,5 +139,7 @@ stages:
                 export ARM_TENANT_ID=$tenantId
                 export ARM_SUBSCRIPTION_ID=$subscriptionId
 
+                az acr login --name whisperujwrf.azurecr.io --username whisperujwrf --password l7oTn8ivAfCXaCyHpELO2mGEva+ep07qEVpTiPXD0N+ACRAXSoYJ
+
                 cd infrastructure/live/${{ parameters.environmentName }}/$(location)/aci/whisper
                 ~/.tfenv/bin/terragrunt apply -auto-approve --terragrunt-non-interactive -compact-warnings
