@@ -13,13 +13,13 @@ parameters:
     values:
       - "dev"
 
-  - name: infra_components
+  - name: infraComponents
     type: object
     default:
       - container-registry
       - networking
 
-  - name: app_components
+  - name: appComponents
     type: object
     default:
       - whisper
@@ -37,6 +37,6 @@ variables:
 stages:
   - template: templates/deploy.yaml
     parameters:
-      infra_components: ${{ parameters.infra_components }}
-      app_components: ${{ parameters.app_components }}
+      infraComponents: ${{ parameters.infraComponents }}
+      appComponents: ${{ parameters.appComponents }}
       environmentName: ${{ parameters.environmentName }}
