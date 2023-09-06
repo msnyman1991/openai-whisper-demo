@@ -22,9 +22,9 @@ remote_state {
     if_exists = "overwrite_terragrunt"
   }
   config = {
-    resource_group_name  = "tfstate-dhyna"
-    storage_account_name = "terraformdhyna"
-    container_name       = "terraform-state-dhyna"
+    resource_group_name  = "tfstate"
+    storage_account_name = "terraformstate"
+    container_name       = "terraform-state"
     key                  = "${get_path_from_repo_root()}/terraform.tfstate"
   }
 }
