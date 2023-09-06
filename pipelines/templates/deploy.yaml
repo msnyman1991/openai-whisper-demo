@@ -3,6 +3,8 @@ parameters:
     type: string
   - name: infra_components
     type: object
+  - name: app_components
+    type: object
 
 stages:
   - stage: Validation

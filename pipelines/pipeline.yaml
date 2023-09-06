@@ -37,4 +37,6 @@ variables:
 stages:
   - template: templates/deploy.yaml
     parameters:
+      infra_components: ${{ parameters.infra_components }}
+      app_components: ${{ parameters.app_components }}
       environmentName: ${{ parameters.environmentName }}
