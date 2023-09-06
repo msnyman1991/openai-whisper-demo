@@ -17,7 +17,30 @@ stages:
   # - stage: TerragruntPlan
   #   dependsOn: Validation
   #   jobs:
-      # - job: BootstrapTerragrunt
+  #     - job: BootstrapTerragrunt
+  #       steps:
+  #         - template: install-terraform.yaml
+  #         - task: AzureCLI@2
+  #           inputs:
+  #             azureSubscription: '$(service-connection)-${{ parameters.environmentName }}'
+  #             scriptType: 'bash'
+  #             addSpnToEnvironment: true
+  #             scriptLocation: 'inlineScript'
+  #             inlineScript: |
+  #               subscriptionId=$(az account show --query "id" -o tsv)
+
+  #               export ARM_CLIENT_ID=$servicePrincipalId
+  #               export ARM_CLIENT_SECRET=$servicePrincipalKey
+  #               export ARM_TENANT_ID=$tenantId
+  #               export ARM_SUBSCRIPTION_ID=$subscriptionId
+
+  #               echo "##### TERRGRUNT Bootstrap #####"
+  #               cd infrastructure/tf-bootstrap
+  #               ~/.tfenv/bin/terraform init
+  #               ~/.tfenv/bin/terraform apply -auto-approve
+                
+      # - job: PlanTerragrunt
+      #   dependsOn: BootstrapTerragrunt
       #   steps:
       #     - template: install-terraform.yaml
       #     - task: AzureCLI@2
@@ -34,77 +57,54 @@ stages:
       #           export ARM_TENANT_ID=$tenantId
       #           export ARM_SUBSCRIPTION_ID=$subscriptionId
 
-      #           echo "##### TERRGRUNT Bootstrap #####"
-      #           cd infrastructure/tf-bootstrap
-      #           ~/.tfenv/bin/terraform init
-      #           ~/.tfenv/bin/terraform apply -auto-approve
-                
-      # - job: PlanTerragrunt
-        # dependsOn: BootstrapTerragrunt
-  #       steps:
-  #         - template: install-terraform.yaml
-  #         - task: AzureCLI@2
-  #           inputs:
-  #             azureSubscription: '$(service-connection)-${{ parameters.environmentName }}'
-  #             scriptType: 'bash'
-  #             addSpnToEnvironment: true
-  #             scriptLocation: 'inlineScript'
-  #             inlineScript: |
-  #               subscriptionId=$(az account show --query "id" -o tsv)
+      #           echo "##### TERRGRUNT Plan ALL #####"
+      #           ## Clear Terragrunt cache
+      #           find infrastructure/ -type d -name '.terragrunt-cache' -prune -exec rm -rf {} +
+      #           cd infrastructure/live/${{ parameters.environmentName }}/$(location)
+      #           ~/.tfenv/bin/terragrunt run-all plan --out=tfplan --terragrunt-non-interactive -compact-warnings
 
-  #               export ARM_CLIENT_ID=$servicePrincipalId
-  #               export ARM_CLIENT_SECRET=$servicePrincipalKey
-  #               export ARM_TENANT_ID=$tenantId
-  #               export ARM_SUBSCRIPTION_ID=$subscriptionId
-
-  #               echo "##### TERRGRUNT Plan ALL #####"
-  #               ## Clear Terragrunt cache
-  #               find infrastructure/ -type d -name '.terragrunt-cache' -prune -exec rm -rf {} +
-  #               cd infrastructure/live/${{ parameters.environmentName }}/$(location)
-  #               ~/.tfenv/bin/terragrunt run-all plan --out=tfplan --terragrunt-non-interactive -compact-warnings
-
-  # - stage: Deploy
-  #   dependsOn: TerragruntPlan
-  #   jobs:
-  #     - job: ApproveTerragrunt
-  #       displayName: 'Terragrunt Approval'
-  #       pool: server
-  #       timeoutInMinutes: 30
-  #       steps:
-  #         - task: ManualValidation@0
-  #           timeoutInMinutes: 30
-  #           inputs:
-  #             instructions: 'Terragrunt will need approval'
-  #             onTimeout: 'reject'
-    
-  #     - job: TerragruntApply
-  #       displayName: 'Terragrunt Apply'
-  #       dependsOn: ApproveTerragrunt
-  #       steps:
-  #         - template: install-terraform.yaml
-  #         - task: AzureCLI@2
-  #           inputs:
-  #             azureSubscription: '$(service-connection)-${{ parameters.environmentName }}'
-  #             scriptType: 'bash'
-  #             addSpnToEnvironment: true
-  #             scriptLocation: 'inlineScript'
-  #             inlineScript: |
-  #               subscriptionId=$(az account show --query "id" -o tsv)
-
-  #               export ARM_CLIENT_ID=$servicePrincipalId
-  #               export ARM_CLIENT_SECRET=$servicePrincipalKey
-  #               export ARM_TENANT_ID=$tenantId
-  #               export ARM_SUBSCRIPTION_ID=$subscriptionId
-
-  #               echo "##### TERRGRUNT Apply ALL #####"
-  #               ## Clear Terragrunt cache
-  #               find infrastructure/ -type d -name '.terragrunt-cache' -prune -exec rm -rf {} +
-  #               cd infrastructure/live/${{ parameters.environmentName }}/$(location)
-  #               ~/.tfenv/bin/terragrunt run-all apply --terragrunt-non-interactive -compact-warnings
-
-  - stage: DeployWhisper
-    # dependsOn: Deploy
+  - stage: Deploy
+    dependsOn: TerragruntPlan
     jobs:
+      # - job: ApproveTerragrunt
+      #   displayName: 'Terragrunt Approval'
+      #   pool: server
+      #   timeoutInMinutes: 30
+      #   steps:
+      #     - task: ManualValidation@0
+      #       timeoutInMinutes: 30
+      #       inputs:
+      #         instructions: 'Terragrunt will need approval'
+      #         onTimeout: 'reject'
+    
+      - job: TerragruntApply
+        displayName: 'Terragrunt Apply'
+        dependsOn: ApproveTerragrunt
+        steps:
+          - template: install-terraform.yaml
+          - task: AzureCLI@2
+            inputs:
+              azureSubscription: '$(service-connection)-${{ parameters.environmentName }}'
+              scriptType: 'bash'
+              addSpnToEnvironment: true
+              scriptLocation: 'inlineScript'
+              inlineScript: |
+                subscriptionId=$(az account show --query "id" -o tsv)
+
+                export ARM_CLIENT_ID=$servicePrincipalId
+                export ARM_CLIENT_SECRET=$servicePrincipalKey
+                export ARM_TENANT_ID=$tenantId
+                export ARM_SUBSCRIPTION_ID=$subscriptionId
+
+                echo "##### TERRGRUNT Apply ALL #####"
+                ## Clear Terragrunt cache
+                find infrastructure/ -type d -name '.terragrunt-cache' -prune -exec rm -rf {} +
+                cd infrastructure/live/${{ parameters.environmentName }}/$(location)
+                ~/.tfenv/bin/terragrunt run-all apply --destroy --terragrunt-non-interactive -compact-warnings
+
+  # - stage: DeployWhisper
+    # dependsOn: Deploy
+    # jobs:
       # - job: InstallPython
       #   steps:
       #     - task: UsePythonVersion@0
@@ -121,25 +121,25 @@ stages:
       #         Dockerfile: 'app/Dockerfile'
       #         tags: 'latest'
 
-      - job: DeployWhisperACI
-        # dependsOn: DockerBuildWhisper
-        steps:
-          - template: install-terraform.yaml 
-          - task: AzureCLI@2
-            inputs:
-              azureSubscription: '$(service-connection)-${{ parameters.environmentName }}'
-              scriptType: 'bash'
-              addSpnToEnvironment: true
-              scriptLocation: 'inlineScript'
-              inlineScript: |
-                subscriptionId=$(az account show --query "id" -o tsv)
+      # - job: DeployWhisperACI
+      #   dependsOn: DockerBuildWhisper
+      #   steps:
+      #     - template: install-terraform.yaml 
+      #     - task: AzureCLI@2
+      #       inputs:
+      #         azureSubscription: '$(service-connection)-${{ parameters.environmentName }}'
+      #         scriptType: 'bash'
+      #         addSpnToEnvironment: true
+      #         scriptLocation: 'inlineScript'
+      #         inlineScript: |
+      #           subscriptionId=$(az account show --query "id" -o tsv)
 
-                export ARM_CLIENT_ID=$servicePrincipalId
-                export ARM_CLIENT_SECRET=$servicePrincipalKey
-                export ARM_TENANT_ID=$tenantId
-                export ARM_SUBSCRIPTION_ID=$subscriptionId
+      #           export ARM_CLIENT_ID=$servicePrincipalId
+      #           export ARM_CLIENT_SECRET=$servicePrincipalKey
+      #           export ARM_TENANT_ID=$tenantId
+      #           export ARM_SUBSCRIPTION_ID=$subscriptionId
 
-                az acr login --name whisperujwrf.azurecr.io --username whisperujwrf --password l7oTn8ivAfCXaCyHpELO2mGEva+ep07qEVpTiPXD0N+ACRAXSoYJ
+      #           az acr login --name whisperujwrf.azurecr.io --username whisperujwrf --password l7oTn8ivAfCXaCyHpELO2mGEva+ep07qEVpTiPXD0N+ACRAXSoYJ
 
-                cd infrastructure/live/${{ parameters.environmentName }}/$(location)/aci/whisper
-                ~/.tfenv/bin/terragrunt apply -auto-approve --terragrunt-non-interactive -compact-warnings
+      #           cd infrastructure/live/${{ parameters.environmentName }}/$(location)/aci/whisper
+      #           ~/.tfenv/bin/terragrunt apply -auto-approve --terragrunt-non-interactive -compact-warnings
