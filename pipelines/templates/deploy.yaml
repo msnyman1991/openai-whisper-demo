@@ -112,7 +112,7 @@ stages:
 
   - stage: DeployWhisper
     # dependsOn: Deploy
-    # jobs:
+    jobs:
     #   - job: InstallPython
     #     steps:
     #       - task: UsePythonVersion@0
