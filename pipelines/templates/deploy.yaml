@@ -122,7 +122,7 @@ stages:
       #         tags: 'latest'
 
       - job: DeployWhisperACI
-        dependsOn: DockerBuildWhisper
+        # dependsOn: DockerBuildWhisper
         steps:
           - template: install-terraform.yaml 
           - task: AzureCLI@2
