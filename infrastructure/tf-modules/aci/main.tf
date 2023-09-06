@@ -28,19 +28,26 @@ resource "azurerm_container_group" "container" {
     server   = var.acr_servername
   }
 
-  count = var.containers
+  dynamic "container" {
+    for_each = var.containers # Specify the number of containers you want
+    content {
+      name   = "container-${container.key}"
+      image  = container.value.image
+      cpu    = container.value.cpu
+      memory = container.value.memory
 
-  container {
-    name   = "${var.container_name_prefix}-${count.index}"
-    image  = var.image
-    cpu    = var.cpu_cores
-    memory = var.memory_in_gb
+      dynamic "ports" {
+        for_each = container.value.ports
+        iterator = p
 
-    ports {
-      port     = var.port
-      protocol = "TCP"
+        content {
+          port     = p.value.port
+          protocol = p.value.protocol
+        }
+      }
     }
   }
 }
+
 
 
