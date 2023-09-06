@@ -36,6 +36,7 @@ stages:
 
                 echo "##### TERRGRUNT Bootstrap #####"
                 cd infrastructure/tf-bootstrap
+                ~/.tfenv/bin/terraform init
                 ~/.tfenv/bin/terraform apply -auto-approve
       - job: PlanTerragrunt
         dependsOn: BootstrapTerragrunt
