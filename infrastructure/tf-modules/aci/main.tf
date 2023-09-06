@@ -28,8 +28,10 @@ resource "azurerm_container_group" "container" {
     server   = var.acr_servername
   }
 
+  count = var.containers
+
   container {
-    name   = var.container_name_prefix
+    name   = "${var.container_name_prefix}-${count.index}"
     image  = var.image
     cpu    = var.cpu_cores
     memory = var.memory_in_gb
@@ -40,4 +42,5 @@ resource "azurerm_container_group" "container" {
     }
   }
 }
+
 
