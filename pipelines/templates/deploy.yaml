@@ -140,4 +140,4 @@ stages:
                 export ARM_SUBSCRIPTION_ID=$subscriptionId
 
                 cd infrastructure/live/${{ parameters.environmentName }}/$(location)/aci/whisper
-                ~/.tfenv/bin/terragrunt apply --terragrunt-non-interactive -compact-warnings
+                ~/.tfenv/bin/terragrunt apply -auto-approve --terragrunt-non-interactive -compact-warnings
