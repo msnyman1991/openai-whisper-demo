@@ -64,7 +64,7 @@ stages:
       #           ~/.tfenv/bin/terragrunt run-all plan --out=tfplan --terragrunt-non-interactive -compact-warnings
 
   - stage: Deploy
-    dependsOn: TerragruntPlan
+    # dependsOn: TerragruntPlan
     jobs:
       # - job: ApproveTerragrunt
       #   displayName: 'Terragrunt Approval'
@@ -79,7 +79,7 @@ stages:
     
       - job: TerragruntApply
         displayName: 'Terragrunt Apply'
-        dependsOn: ApproveTerragrunt
+        # dependsOn: ApproveTerragrunt
         steps:
           - template: install-terraform.yaml
           - task: AzureCLI@2
