@@ -110,54 +110,54 @@ stages:
                   cd infrastructure/live/${{ parameters.environmentName }}/$(location)/${{ infraComponent }}
                   ~/.tfenv/bin/terragrunt run-all apply --terragrunt-non-interactive -compact-warnings
 
-  # - stage: DeployWhisper
-  #   dependsOn: Deploy
-  #   jobs:
-  #     - job: InstallPython
-  #       steps:
-  #         - task: UsePythonVersion@0
-  #           inputs:
-  #             versionSpec: '3.x'
-  #             addToPath: true
-  #     - job: DockerBuildWhisper
-  #       steps:
-  #         - task: Docker@2
-  #           inputs:
-  #             containerRegistry: 'whisper-azure-container-registry'
-  #             repository: 'whisper.azurecr.io/whisper-image'
-  #             command: 'buildAndPush'
-  #             Dockerfile: 'app/whisper-asr-webservice/Dockerfile'
-  #             tags: 'latest'
+  - stage: DeployWhisper
+    dependsOn: Deploy
+    jobs:
+      - job: InstallPython
+        steps:
+          - task: UsePythonVersion@0
+            inputs:
+              versionSpec: '3.x'
+              addToPath: true
+      - job: DockerBuildWhisper
+        steps:
+          - task: Docker@2
+            inputs:
+              containerRegistry: 'whisper-azure-container-registry'
+              repository: 'whisper.azurecr.io/whisper-image'
+              command: 'buildAndPush'
+              Dockerfile: 'app/whisper-asr-webservice/Dockerfile'
+              tags: 'latest'
 
-  #     - job: DeployWhisperACI
-  #       dependsOn: DockerBuildWhisper
-  #       steps:
-  #         - template: install-terraform.yaml 
-  #         - ${{ each appComponent in parameters.appComponents }}:
-  #           - task: AzureCLI@2
-  #             displayName: Deploy ${{ appComponent }}
-  #             inputs:
-  #               azureSubscription: '$(service-connection)-${{ parameters.environmentName }}'
-  #               scriptType: 'bash'
-  #               addSpnToEnvironment: true
-  #               scriptLocation: 'inlineScript'
-  #               inlineScript: |
-  #                 subscriptionId=$(az account show --query "id" -o tsv)
+      - job: DeployWhisperACI
+        dependsOn: DockerBuildWhisper
+        steps:
+          - template: install-terraform.yaml 
+          - ${{ each appComponent in parameters.appComponents }}:
+            - task: AzureCLI@2
+              displayName: Deploy ${{ appComponent }}
+              inputs:
+                azureSubscription: '$(service-connection)-${{ parameters.environmentName }}'
+                scriptType: 'bash'
+                addSpnToEnvironment: true
+                scriptLocation: 'inlineScript'
+                inlineScript: |
+                  subscriptionId=$(az account show --query "id" -o tsv)
 
-  #                 export ARM_CLIENT_ID=$servicePrincipalId
-  #                 export ARM_CLIENT_SECRET=$servicePrincipalKey
-  #                 export ARM_TENANT_ID=$tenantId
-  #                 export ARM_SUBSCRIPTION_ID=$subscriptionId
+                  export ARM_CLIENT_ID=$servicePrincipalId
+                  export ARM_CLIENT_SECRET=$servicePrincipalKey
+                  export ARM_TENANT_ID=$tenantId
+                  export ARM_SUBSCRIPTION_ID=$subscriptionId
 
-  #                 # Define credentials for ACR
-  #                 new_acr_username="$(ACR_USERNAME)"
-  #                 new_acr_password="$(ACR_PASSWORD)"
-  #                 new_acr_server="$(ACR_SERVER)"
+                  # Define credentials for ACR
+                  new_acr_username="$(ACR_USERNAME)"
+                  new_acr_password="$(ACR_PASSWORD)"
+                  new_acr_server="$(ACR_SERVER)"
 
-  #                 # Set the values in the terragrunt.hcl file
-  #                 sed -i "s/acr_username = .*/acr_username = \"$new_acr_username\"/" infrastructure/live/_env/aci/{{ appComponent }}.hcl
-  #                 sed -i "s/acr_password = .*/acr_password = \"$new_acr_password\"/" infrastructure/live/_env/aci/{{ appComponent }}.hcl
-  #                 sed -i "s/acr_server = .*/acr_server = \"$new_acr_server\"/" infrastructure/live/_env/aci/{{ appComponent }}.hcl
+                  # Set the values in the terragrunt.hcl file
+                  sed -i "s/acr_username = .*/acr_username = \"$new_acr_username\"/" infrastructure/live/_env/aci/{{ appComponent }}.hcl
+                  sed -i "s/acr_password = .*/acr_password = \"$new_acr_password\"/" infrastructure/live/_env/aci/{{ appComponent }}.hcl
+                  sed -i "s/acr_server = .*/acr_server = \"$new_acr_server\"/" infrastructure/live/_env/aci/{{ appComponent }}.hcl
 
-  #                 cd infrastructure/live/${{ parameters.environmentName }}/$(location)/aci/{{ appComponent }}
-  #                 ~/.tfenv/bin/terragrunt apply -auto-approve --terragrunt-non-interactive -compact-warnings
+                  cd infrastructure/live/${{ parameters.environmentName }}/$(location)/aci/{{ appComponent }}
+                  ~/.tfenv/bin/terragrunt apply -auto-approve --terragrunt-non-interactive -compact-warnings
