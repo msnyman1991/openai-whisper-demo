@@ -14,7 +14,8 @@ stages:
             parameters:
               environmentName: ${{ parameters.environmentName }}
 
-  - stage: TerragruntBootstrap
+  - stage: TerragruntPlan
+    dependsOn: Validation
     jobs:
       - job: BootstrapTerragrunt
         steps:
@@ -36,10 +37,6 @@ stages:
                 echo "##### TERRGRUNT Bootstrap #####"
                 cd infrastructure/tf-bootstrap
                 ~/.tfenv/bin/terraform apply -auto-approve
-
-  - stage: TerragruntPlan
-    dependsOn: Validation
-    jobs:
       - job: PlanTerragrunt
         steps:
           - template: install-terraform.yaml
