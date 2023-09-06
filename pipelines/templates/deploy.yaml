@@ -105,21 +105,21 @@ stages:
   - stage: DeployWhisper
     # dependsOn: Deploy
     jobs:
-      - job: InstallPython
-        steps:
-          - task: UsePythonVersion@0
-            inputs:
-              versionSpec: '3.x'
-              addToPath: true
-      - job: DockerBuildWhisper
-        steps:
-          - task: Docker@2
-            inputs:
-              containerRegistry: 'whisper-azure-container-registry'
-              repository: 'whisperujwrf.azurecr.io/whisper-image'
-              command: 'buildAndPush'
-              Dockerfile: 'app/Dockerfile'
-              tags: 'latest'
+      # - job: InstallPython
+      #   steps:
+      #     - task: UsePythonVersion@0
+      #       inputs:
+      #         versionSpec: '3.x'
+      #         addToPath: true
+      # - job: DockerBuildWhisper
+      #   steps:
+      #     - task: Docker@2
+      #       inputs:
+      #         containerRegistry: 'whisper-azure-container-registry'
+      #         repository: 'whisperujwrf.azurecr.io/whisper-image'
+      #         command: 'buildAndPush'
+      #         Dockerfile: 'app/Dockerfile'
+      #         tags: 'latest'
 
       - job: DeployWhisperACI
         dependsOn: DockerBuildWhisper
