@@ -7,7 +7,7 @@ locals {
 }
 
 dependency "container_registry" {
-  config_path = "../../container-registry"
+  config_path = "../../container-registry/whisper"
 }
 
 inputs = {
