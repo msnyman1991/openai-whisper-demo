@@ -52,7 +52,6 @@ stages:
               onTimeout: 'reject'
     
       - job: ApplyTerraform
-        dependsOn: Approval
         displayName: 'Terraform Apply'
         dependsOn: ApproveTerraform
         steps:
