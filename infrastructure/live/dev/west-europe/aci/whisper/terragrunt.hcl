@@ -11,11 +11,11 @@ include "env" {
 }
 
 inputs = {
-  resource_group_name_prefix  = "rg"
-  container_group_name_prefix = "acigroup"
-  container_name_prefix       = "aci"
-  image                       = "whisperujwrf.azurecr.io/whisperujwrf.azurecr.io/whisper-image:latest"
-  port                        = "80"
+  resource_group_name_prefix  = "whisper_rg"
+  container_group_name_prefix = "whisper_acigroup"
+  container_name_prefix       = "whisper-asr-webservice"
+  image                       = "whisper.azurecr.io/whisper.azurecr.io/whisper-image:latest"
+  port                        = "9000"
   cpu_cores                   = "1"
   memory_in_gb                = "2"
 }

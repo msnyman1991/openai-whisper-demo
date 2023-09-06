@@ -124,7 +124,7 @@ stages:
           - task: Docker@2
             inputs:
               containerRegistry: 'whisper-azure-container-registry'
-              repository: 'whisperujwrf.azurecr.io/whisper-image'
+              repository: 'whisper.azurecr.io/whisper-image'
               command: 'buildAndPush'
               Dockerfile: 'app/whisper-asr-webservice/Dockerfile'
               tags: 'latest'
