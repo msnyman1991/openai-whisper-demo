@@ -30,6 +30,7 @@ stages:
                 export ARM_CLIENT_ID=$servicePrincipalId
                 export ARM_CLIENT_SECRET=$servicePrincipalKey
                 export ARM_TENANT_ID=$tenantId
+                export ARM_SUBSCRIPTION_ID="$id"
 
                 echo "##### TERRGRUNT Plan ALL #####"
                 ## Clear Terragrunt cache
@@ -66,6 +67,7 @@ stages:
                 export ARM_CLIENT_ID=$servicePrincipalId
                 export ARM_CLIENT_SECRET=$servicePrincipalKey
                 export ARM_TENANT_ID=$tenantId
+                export ARM_SUBSCRIPTION_ID="$id"
 
                 echo "##### TERRGRUNT Apply ALL #####"
                 ## Clear Terragrunt cache
