@@ -27,7 +27,6 @@ parameters:
 variables:
   - group: tools-versions
   - group: azure-variables
-  - group: acr-credentials
   - name: target
     value: $(build.artifactstagingdirectory)/terraform
   - name: artifact
