@@ -49,7 +49,7 @@ stages:
           - template: install-terraform.yaml
           - ${{ each service in parameters.infraComponents }}:
             - task: AzureCLI@2
-              displayName: Plan ${{ infraComponents }}
+              displayName: Plan ${{ parameters.infraComponents }}
               inputs:
                 azureSubscription: '$(service-connection)-${{ parameters.environmentName }}'
                 scriptType: 'bash'
@@ -66,7 +66,7 @@ stages:
                   echo "##### TERRGRUNT Plan ALL #####"
                   ## Clear Terragrunt cache
                   find infrastructure/ -type d -name '.terragrunt-cache' -prune -exec rm -rf {} +
-                  cd infrastructure/live/${{ parameters.environmentName }}/$(location)/${{ infraComponents }}
+                  cd infrastructure/live/${{ parameters.environmentName }}/$(location)/${{ parameters.infraComponents }}
                   ~/.tfenv/bin/terragrunt run-all plan --out=tfplan --terragrunt-non-interactive -compact-warnings
 
   - stage: Deploy
@@ -90,7 +90,7 @@ stages:
           - template: install-terraform.yaml
           - ${{ each service in parameters.infraComponents }}:
             - task: AzureCLI@2
-              displayName: Apply ${{ infraComponents }}
+              displayName: Apply ${{ parameters.infraComponents }}
               inputs:
                 azureSubscription: '$(service-connection)-${{ parameters.environmentName }}'
                 scriptType: 'bash'
@@ -107,7 +107,7 @@ stages:
                   echo "##### TERRGRUNT Apply ALL #####"
                   ## Clear Terragrunt cache
                   find infrastructure/ -type d -name '.terragrunt-cache' -prune -exec rm -rf {} +
-                  cd infrastructure/live/${{ parameters.environmentName }}/$(location)/${{ infraComponents }}
+                  cd infrastructure/live/${{ parameters.environmentName }}/$(location)/${{ parameters.infraComponents }}
                   ~/.tfenv/bin/terragrunt run-all apply --destroy --terragrunt-non-interactive -compact-warnings
 
   - stage: DeployWhisper
@@ -135,7 +135,7 @@ stages:
           - template: install-terraform.yaml 
           - ${{ each service in parameters.appComponents }}:
             - task: AzureCLI@2
-              displayName: Deploy {{ appComponents }}
+              displayName: Deploy ${{ parameters.appComponents }}
               inputs:
                 azureSubscription: '$(service-connection)-${{ parameters.environmentName }}'
                 scriptType: 'bash'
@@ -155,9 +155,9 @@ stages:
                   new_acr_server="$(ACR_SERVER)"
 
                   # Set the values in the terragrunt.hcl file
-                  sed -i "s/acr_username = .*/acr_username = \"$new_acr_username\"/" infrastructure/live/_env/aci/{{ appComponents }}.hcl
-                  sed -i "s/acr_password = .*/acr_password = \"$new_acr_password\"/" infrastructure/live/_env/aci/{{ appComponents }}.hcl
-                  sed -i "s/acr_server = .*/acr_server = \"$new_acr_server\"/" infrastructure/live/_env/aci/{{ appComponents }}.hcl
+                  sed -i "s/acr_username = .*/acr_username = \"$new_acr_username\"/" infrastructure/live/_env/aci/${{ parameters.appComponents }}.hcl
+                  sed -i "s/acr_password = .*/acr_password = \"$new_acr_password\"/" infrastructure/live/_env/aci/${{ parameters.appComponents }}.hcl
+                  sed -i "s/acr_server = .*/acr_server = \"$new_acr_server\"/" infrastructure/live/_env/aci/${{ parameters.appComponents }}.hcl
 
-                  cd infrastructure/live/${{ parameters.environmentName }}/$(location)/aci/{{ appComponents }}
+                  cd infrastructure/live/${{ parameters.environmentName }}/$(location)/aci/${{ parameters.appComponents }}
                   ~/.tfenv/bin/terragrunt apply -auto-approve --terragrunt-non-interactive -compact-warnings
