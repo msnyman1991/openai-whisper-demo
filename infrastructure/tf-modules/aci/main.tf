@@ -22,11 +22,11 @@ resource "azurerm_container_group" "container" {
   os_type             = "Linux"
   restart_policy      = var.restart_policy
 
-  # image_registry_credential {
-  #   username = "whisper-registry"
-  #   password = "jgpfaqrffYl8J5DU/XODUfM22oa5HNsYlBfJRhQSfG+ACRB0Qst+"
-  #   server   = "whisperujwrf.azurecr.io"
-  # }
+  image_registry_credential {
+    username = "whisperujwrf"
+    password = "l7oTn8ivAfCXaCyHpELO2mGEva+ep07qEVpTiPXD0N+ACRAXSoYJ"
+    server   = "whisperujwrf.azurecr.io"
+  }
 
   container {
     name   = "${var.container_name_prefix}-${random_string.container_name.result}"
