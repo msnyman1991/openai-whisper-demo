@@ -30,6 +30,12 @@ variable "location" {
   type = string
 }
 
+variable "app_gateway_ip_config_name" {
+  type = string
+}
+
+
+
 
 
 

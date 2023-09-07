@@ -116,9 +116,8 @@ variable "whisper_monitor_alert_name" {
   type = string
 }
 
-
-
-
-
+variable "app_gateway_ip_config_name" {
+  type = string
+}
 
 

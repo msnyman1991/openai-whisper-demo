@@ -40,4 +40,5 @@ inputs = {
   app_gateway_name                    = "whisper_app_gateway"
   app_gateway_frontend_port_name      = "whisper_app_gateway_frontend_port"
   app_gateway_frontend_ip_config_name = "whisper_app_gateway_frontend_ip_config"
+  app_gateway_ip_config_name          = "whisper_app_gateway_ip_config_name"
 }
