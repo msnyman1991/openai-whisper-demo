@@ -80,8 +80,9 @@ resource "azurerm_container_group" "container" {
   name                = var.container_group_name_prefix
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
-  os_type             = "Linux"
-  restart_policy      = var.restart_policy
+  ip_address_type     = "Private"
+  os_type        = "Linux"
+  restart_policy = var.restart_policy
 
   image_registry_credential {
     username = var.acr_username
