@@ -15,20 +15,20 @@ dependency "virtual_network" {
 }
 
 inputs = {
-  resource_group_name_prefix       = "whisper_rg"
-  container_group_name_prefix      = "whisper_acigroup"
-  container_name_prefix            = "whisper-asr-webservice"
-  image                            = "whisper.azurecr.io/whisper.azurecr.io/whisper-image:latest"
-  port                             = "9000"
-  cpu_cores                        = "1"
-  memory_in_gb                     = "2"
-  private_subnet_id                = dependency.virtual_network.outputs.private_subnet_id
-  public_subnet_id                 = dependency.virtual_network.outputs.public_subnet_id
-  whisper_monitor_actiongroup_name = "whisper_monitor_ag"
+  resource_group_name_prefix             = "whisper_rg"
+  container_group_name_prefix            = "whisper_acigroup"
+  container_name_prefix                  = "whisper-asr-webservice"
+  image                                  = "whisper.azurecr.io/whisper.azurecr.io/whisper-image:latest"
+  port                                   = "9000"
+  cpu_cores                              = "1"
+  memory_in_gb                           = "2"
+  private_subnet_id                      = dependency.virtual_network.outputs.private_subnet_id
+  public_subnet_id                       = dependency.virtual_network.outputs.public_subnet_id
+  whisper_monitor_actiongroup_name       = "whisper_monitor_ag"
   whisper_monitor_actiongroup_short_name = "whisper_mag"
-  email_receiver_name              = "Morne"
-  email_receiver_address           = "mr.mornesnyman@gmail.com"
-  whisper_monitor_alert_name       = "whisper_monitor_alerts"
+  email_receiver_name                    = "Morne"
+  email_receiver_address                 = "mr.mornesnyman@gmail.com"
+  whisper_monitor_alert_name             = "whisper_monitor_alerts"
 
   lb_resource_group_name = "whisper_lb_rg"
   public_ip_name         = "whisper_lb_ip"
