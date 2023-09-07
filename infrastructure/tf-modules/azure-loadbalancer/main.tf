@@ -31,7 +31,7 @@ resource "azurerm_lb_probe" "this" {
   port                = var.port
   interval_in_seconds = 15
   number_of_probes    = 2
-  request_path        = "/"
+  # request_path        = "/"
   # request_path_behavior = "GET"
   # backend_port          = var.port
 }
