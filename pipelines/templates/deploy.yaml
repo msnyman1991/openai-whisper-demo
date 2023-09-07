@@ -132,7 +132,7 @@ stages:
   - stage: PlanWhisper
     jobs:
       - job: PlanWhisperACI
-        dependsOn: BuildWhisper
+        # dependsOn: BuildWhisper
         steps:
           - template: install-terraform.yaml 
           - ${{ each appComponent in parameters.appComponents }}:
