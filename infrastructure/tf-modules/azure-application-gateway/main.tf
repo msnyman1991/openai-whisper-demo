@@ -60,7 +60,7 @@ resource "azurerm_application_gateway" "this" {
   backend_address_pool {
     name = "BackendAddressPool"
     # ip_addresses = [var.container_ipv4_address]
-    fqdns = var.fqdn
+    fqdns = [var.fqdn]
   }
 
   backend_http_settings {
