@@ -38,7 +38,9 @@ variable "private_subnet_id_ag" {
   type = string
 }
 
-
+variable "fqdn" {
+  type = string
+}
 
 
 
