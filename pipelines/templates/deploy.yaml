@@ -156,10 +156,10 @@ stages:
                   ~/.tfenv/bin/terragrunt plan --out=tfplan
 
   - stage: DeployWhisper
+    dependsOn: PlanWhisper  
     jobs:
       - job: ApproveTerragrunt
         displayName: 'Terragrunt Approval'
-        dependsOn: PlanWhisper
         pool: server
         timeoutInMinutes: 30
         steps:
