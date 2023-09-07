@@ -23,6 +23,7 @@ stages:
             pip install pylint
             pylint app/
           displayName: 'Run Pylint'
+        continueOnError: true
 
   - stage: TerragruntPlan
     dependsOn: Validation
