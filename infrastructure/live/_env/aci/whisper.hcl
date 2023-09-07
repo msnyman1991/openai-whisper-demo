@@ -9,9 +9,9 @@ locals {
 dependency "container_registry" {
   config_path = "../../container-registry/whisper"
   mock_outputs = {
-    acr_username   = "mock_username"
-    acr_password   = "mock_password"
-    acr_servername = "mock_server_name"
+    admin_username = "mock_username"
+    admin_password = "mock_password"
+    login_server   = "mock_server_name"
   }
   mock_outputs_allowed_terraform_commands = ["validate", "plan"]
 }
