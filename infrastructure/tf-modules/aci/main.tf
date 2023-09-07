@@ -73,7 +73,7 @@ module "azurerm_application_gateway" {
   app_gateway_ip_config_name          = var.app_gateway_ip_config_name
   app_gateway_frontend_port_name      = var.app_gateway_frontend_port_name
   app_gateway_frontend_ip_config_name = var.app_gateway_frontend_ip_config_name
-  container_ipv4_address              = var.container_ipv4_address
+  container_ipv4_address              = azurerm_container_group.container.ip_address
 
 }
 

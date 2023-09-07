@@ -123,8 +123,3 @@ variable "app_gateway_frontend_port_name" {
 variable "app_gateway_frontend_ip_config_name" {
   type = string
 }
-
-variable "container_ipv4_address" {
-  type = string
-}
-
