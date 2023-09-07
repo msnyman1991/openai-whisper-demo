@@ -62,17 +62,16 @@ resource "azurerm_monitor_metric_alert" "example" {
   }
 }
 
-module "azure_loadbalancer" {
-  source = "../azure-loadbalancer"
-
-  lb_resource_group_name = var.lb_resource_group_name
-  location               = var.location
-  public_ip_name         = var.public_ip_name
-  loadbalancer_name      = var.loadbalancer_name
-  lb_frontend_name       = var.lb_frontend_name
-  lb_backend_pool_name   = var.lb_backend_pool_name
-  port                   = var.port
-  loadbalancer_rule      = var.loadbalancer_rule
+module "azurerm_application_gateway" {
+  source                              = "../azure-application-gateway"
+  location                            = var.location
+  app_gateway_rg_name                 = var.app_gateway_rg_name
+  app_gateway_public_ip_name          = var.app_gateway_public_ip_name
+  app_gateway_name                    = var.app_gateway_name
+  private_subnet_id                   = var.private_subnet_id
+  port                                = var.port
+  app_gateway_frontend_port_name      = var.app_gateway_frontend_port_name
+  app_gateway_frontend_ip_config_name = var.app_gateway_frontend_ip_config_name
 
 }
 

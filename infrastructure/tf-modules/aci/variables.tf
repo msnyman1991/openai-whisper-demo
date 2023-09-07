@@ -68,47 +68,19 @@ variable "acr_servername" {
   type = string
 }
 
-variable "lb_resource_group_name" {
-  type = string
-}
-
 variable "location" {
   type = string
 }
 
-variable "public_ip_name" {
+variable "app_gateway_rg_name" {
   type = string
 }
 
-variable "loadbalancer_name" {
+variable "app_gateway_public_ip_name" {
   type = string
 }
 
-variable "lb_frontend_name" {
-  type = string
-}
-
-variable "lb_backend_pool_name" {
-  type = string
-}
-
-variable "whisper_monitor_actiongroup_name" {
-  type = string
-}
-
-variable "whisper_monitor_actiongroup_short_name" {
-  type = string
-}
-
-variable "whisper_monitor_alert_name" {
-  type = string
-}
-
-variable "email_receiver_name" {
-  type = string
-}
-
-variable "email_receiver_address" {
+variable "app_gateway_name" {
   type = string
 }
 
@@ -116,6 +88,10 @@ variable "private_subnet_id" {
   type = string
 }
 
-variable "loadbalancer_rule" {
+variable "app_gateway_frontend_port_name" {
+  type = string
+}
+
+variable "app_gateway_frontend_ip_config_name" {
   type = string
 }

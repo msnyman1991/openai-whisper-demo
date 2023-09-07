@@ -30,10 +30,10 @@ inputs = {
   email_receiver_address                 = "mr.mornesnyman@gmail.com"
   whisper_monitor_alert_name             = "whisper_monitor_alerts"
 
-  lb_resource_group_name = "whisper_lb_rg"
-  public_ip_name         = "whisper_lb_ip"
-  loadbalancer_name      = "whisper_lb"
-  lb_frontend_name       = "whisper_lb_frontend"
-  lb_backend_pool_name   = "whisper_lb_backend_pool"
-  loadbalancer_rule      = "whisper_lb_rule"
+  app_gateway_rg_name                 = "whisper_app_gateway_rg"
+  app_gateway_public_ip_name          = "whisper_app_gateway_public_ip"
+  app_gateway_name                    = "whisper_app_gateway"
+  private_subnet_id                   = dependency.virtual_network.outputs.private_subnet_id
+  app_gateway_frontend_port_name      = "whisper_app_gateway_frontend_port"
+  app_gateway_frontend_ip_config_name = "whisper_app_gateway_frontend_ip_config"
 }
