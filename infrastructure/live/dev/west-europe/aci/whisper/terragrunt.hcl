@@ -28,6 +28,7 @@ inputs = {
   memory_in_gb                           = "2"
   private_subnet_id                      = dependency.virtual_network.outputs.private_subnet_id
   private_subnet_id_ag                   = dependency.virtual_network.outputs.private_subnet_id_ag
+  container_ipv4_address                 = dependency.virtual_network.outputs.container_ipv4_address
   whisper_monitor_actiongroup_name       = "whisper_monitor_ag"
   whisper_monitor_actiongroup_short_name = "whisper_mag"
   email_receiver_name                    = "Morne"

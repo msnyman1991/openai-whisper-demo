@@ -34,13 +34,12 @@ variable "location" {
   type = string
 }
 
+variable "container_ipv4_address" {
+  type = string
+}
 
 
 
 
 
 
-
-
-
-  

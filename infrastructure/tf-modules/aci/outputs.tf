@@ -1,3 +1,3 @@
-# output "container_ipv4_addresses" {
-#   value = [for container in azurerm_container_group.container : container.ip_address]
-# }
+output "container_ipv4_address" {
+  value = azurerm_container_group.container.ip_address
+}
