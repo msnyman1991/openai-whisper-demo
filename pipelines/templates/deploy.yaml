@@ -129,6 +129,42 @@ stages:
     #           Dockerfile: 'app/whisper-asr-webservice/Dockerfile'
     #           tags: 'latest'
 
+      - job: PlanWhisperACI
+        # dependsOn: DockerBuildWhisper
+        steps:
+          - template: install-terraform.yaml 
+          - ${{ each appComponent in parameters.appComponents }}:
+            - task: AzureCLI@2
+              displayName: Deploy ${{ appComponent }}
+              inputs:
+                azureSubscription: '$(service-connection)-${{ parameters.environmentName }}'
+                scriptType: 'bash'
+                addSpnToEnvironment: true
+                scriptLocation: 'inlineScript'
+                inlineScript: |
+                  subscriptionId=$(az account show --query "id" -o tsv)
+
+                  export ARM_CLIENT_ID=$servicePrincipalId
+                  export ARM_CLIENT_SECRET=$servicePrincipalKey
+                  export ARM_TENANT_ID=$tenantId
+                  export ARM_SUBSCRIPTION_ID=$subscriptionId
+
+
+                  cd infrastructure/live/${{ parameters.environmentName }}/$(location)/aci/whisper
+                  ~/.tfenv/bin/terragrunt plan --out=tfplan
+
+      - job: ApproveTerragrunt
+        displayName: 'Terragrunt Approval'
+        dependsOn: PlanWhisperACI
+        pool: server
+        timeoutInMinutes: 30
+        steps:
+          - task: ManualValidation@0
+            timeoutInMinutes: 30
+            inputs:
+              instructions: 'Terragrunt will need approval'
+              onTimeout: 'reject'
+
       - job: DeployWhisperACI
         # dependsOn: DockerBuildWhisper
         steps:
