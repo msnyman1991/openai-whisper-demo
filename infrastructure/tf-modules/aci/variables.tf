@@ -91,7 +91,3 @@ variable "lb_frontend_name" {
 variable "lb_backend_pool_name" {
   type = string
 }
-
-variable "port" {
-  type = number
-}
