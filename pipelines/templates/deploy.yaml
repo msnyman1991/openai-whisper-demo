@@ -166,7 +166,7 @@ stages:
               onTimeout: 'reject'
 
       - job: DeployWhisperACI
-        # dependsOn: DockerBuildWhisper
+        dependsOn: ApproveTerragrunt
         steps:
           - template: install-terraform.yaml 
           - ${{ each appComponent in parameters.appComponents }}:
