@@ -110,7 +110,7 @@ stages:
                   cd infrastructure/live/${{ parameters.environmentName }}/$(location)/${{ infraComponent }}
                   ~/.tfenv/bin/terragrunt run-all apply --terragrunt-non-interactive -compact-warnings
 
-  - stage: BuildWhisper
+  # - stage: BuildWhisper
     # dependsOn: Deploy
     # jobs:
     #   - job: InstallPython
@@ -132,7 +132,7 @@ stages:
   - stage: PlanWhisper
     jobs:
       - job: PlanWhisperACI
-        # dependsOn: DockerBuildWhisper
+        # dependsOn: BuildWhisper
         steps:
           - template: install-terraform.yaml 
           - ${{ each appComponent in parameters.appComponents }}:
