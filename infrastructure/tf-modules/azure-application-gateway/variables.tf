@@ -26,6 +26,10 @@ variable "app_gateway_frontend_ip_config_name" {
   type = string
 }
 
+variable "location" {
+  type = string
+}
+
 
 
 
