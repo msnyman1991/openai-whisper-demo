@@ -14,7 +14,6 @@ dependency "virtual_network" {
   config_path = "../../networking/virtual-network"
   mock_outputs = {
     private_subnet_id = "/subscriptions/mock_subscription_id/resourceGroups/mock_resource_group_name/providers/Microsoft.Network/virtualNetworks/mock_virtual_network_name/subnets/mock_subnet_name"
-    public_subnet_id  = "/subscriptions/mock_subscription_id/resourceGroups/mock_resource_group_name/providers/Microsoft.Network/virtualNetworks/mock_virtual_network_name/subnets/mock_subnet_name"
   }
   mock_outputs_allowed_terraform_commands = ["validate", "plan"]
 }
@@ -28,7 +27,6 @@ inputs = {
   cpu_cores                              = "1"
   memory_in_gb                           = "2"
   private_subnet_id                      = dependency.virtual_network.outputs.private_subnet_id
-  public_subnet_id                       = dependency.virtual_network.outputs.public_subnet_id
   whisper_monitor_actiongroup_name       = "whisper_monitor_ag"
   whisper_monitor_actiongroup_short_name = "whisper_mag"
   email_receiver_name                    = "Morne"
