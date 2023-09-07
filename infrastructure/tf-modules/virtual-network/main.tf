@@ -58,3 +58,14 @@ resource "azurerm_subnet_network_security_group_association" "public_nsg_associa
   subnet_id                 = azurerm_subnet.public.id
   network_security_group_id = azurerm_network_security_group.public_nsg.id
 }
+
+resource "azurerm_subnet_delegation" "container_instance_delegation" {
+  name                 = "aci-delegation"
+  resource_group_name  = azurerm_resource_group.this.name
+  virtual_network_name = azurerm_virtual_network.this.name
+  subnet_name          = azurerm_subnet.private.name
+  service_delegation {
+    name    = "Microsoft.ContainerInstance"
+    actions = ["Microsoft.Network/virtualNetworks/subnets/join/action"]
+  }
+}
