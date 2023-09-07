@@ -12,6 +12,7 @@ dependency "container_registry" {
 
 inputs = {
   resource_group_location = local.env_vars.locals.region
+  location                = local.env_vars.locals.region
   acr_username            = dependency.container_registry.outputs.admin_username
   acr_password            = dependency.container_registry.outputs.admin_password
   acr_servername          = dependency.container_registry.outputs.login_server
