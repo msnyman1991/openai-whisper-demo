@@ -105,6 +105,6 @@ resource "azurerm_container_group" "container" {
     }
   }
 
-  subnet_ids = [var.private_subnet_id]
+  # subnet_ids = [var.private_subnet_id]
 }
 
