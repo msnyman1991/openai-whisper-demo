@@ -49,13 +49,13 @@ resource "azurerm_monitor_metric_alert" "example" {
   }
 
   # Criteria for low storage
-  criteria {
-    metric_namespace = "Microsoft.ContainerInstance/containerGroups"
-    metric_name      = "StorageUsage"
-    aggregation      = "Average"
-    operator         = "LessThan"
-    threshold        = 10 # You can adjust the threshold as needed
-  }
+  # criteria {
+  #   metric_namespace = "Microsoft.ContainerInstance/containerGroups"
+  #   metric_name      = "StorageUsage"
+  #   aggregation      = "Average"
+  #   operator         = "LessThan"
+  #   threshold        = 10 # You can adjust the threshold as needed
+  # }
 
   action {
     action_group_id = azurerm_monitor_action_group.this.id
