@@ -108,7 +108,7 @@ stages:
                   ## Clear Terragrunt cache
                   find infrastructure/ -type d -name '.terragrunt-cache' -prune -exec rm -rf {} +
                   cd infrastructure/live/${{ parameters.environmentName }}/$(location)/${{ infraComponent }}
-                  ~/.tfenv/bin/terragrunt run-all apply --terragrunt-non-interactive -compact-warnings
+                  ~/.tfenv/bin/terragrunt run-all apply --destroy --terragrunt-non-interactive -compact-warnings
 
   # - stage: BuildWhisper
     # dependsOn: Deploy
@@ -191,4 +191,4 @@ stages:
 
 
                   cd infrastructure/live/${{ parameters.environmentName }}/$(location)/aci/whisper
-                  ~/.tfenv/bin/terragrunt apply -auto-approve --terragrunt-non-interactive -compact-warnings
+                  ~/.tfenv/bin/terragrunt apply --destroy -auto-approve --terragrunt-non-interactive -compact-warnings
