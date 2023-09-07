@@ -72,6 +72,7 @@ module "azure_loadbalancer" {
   lb_frontend_name       = var.lb_frontend_name
   lb_backend_pool_name   = var.lb_backend_pool_name
   port                   = var.port
+  loadbalancer_rule      = var.loadbalancer_rule
 
 }
 
