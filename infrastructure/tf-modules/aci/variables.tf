@@ -76,6 +76,10 @@ variable "private_subnet_id" {
   type = string
 }
 
+variable "private_subnet_id_ag" {
+  type = string
+}
+
 variable "email_receiver_address" {
   type = string
 }

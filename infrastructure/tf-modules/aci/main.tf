@@ -65,7 +65,7 @@ resource "azurerm_monitor_metric_alert" "example" {
 module "azurerm_application_gateway" {
   source                              = "../azure-application-gateway"
   location                            = var.location
-  private_subnet_id                   = var.private_subnet_id
+  private_subnet_id_ag                = var.private_subnet_id_ag
   port                                = var.port
   app_gateway_rg_name                 = var.app_gateway_rg_name
   app_gateway_public_ip_name          = var.app_gateway_public_ip_name

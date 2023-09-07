@@ -29,3 +29,7 @@ variable "private_subnet_name" {
 variable "private_address_prefixes" {
   type = list(string)
 }
+
+variable "private_address_prefixes_ag" {
+  type = list(string)
+}

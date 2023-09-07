@@ -11,7 +11,7 @@ include "env" {
 }
 
 inputs = {
-  virtual_network_cidr     = ["10.0.0.0/16"]
-  private_address_prefixes = ["10.0.1.0/24"]
-  public_address_prefixes  = ["10.0.2.0/24"]
+  virtual_network_cidr        = ["10.0.0.0/16"]
+  private_address_prefixes    = ["10.0.1.0/24"]
+  private_address_prefixes_ag = ["10.0.2.0/24"]
 }

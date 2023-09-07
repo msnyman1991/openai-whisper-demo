@@ -34,3 +34,10 @@ resource "azurerm_subnet" "private" {
     }
   }
 }
+
+resource "azurerm_subnet" "private_ag" {
+  name                 = "${var.private_subnet_name}-ag-${random_string.naming_convention.result}"
+  resource_group_name  = azurerm_resource_group.this.name
+  virtual_network_name = azurerm_virtual_network.this.name
+  address_prefixes     = var.private_address_prefixes_ag
+}
