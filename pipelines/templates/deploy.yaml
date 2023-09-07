@@ -110,24 +110,24 @@ stages:
                   cd infrastructure/live/${{ parameters.environmentName }}/$(location)/${{ infraComponent }}
                   ~/.tfenv/bin/terragrunt run-all apply --terragrunt-non-interactive -compact-warnings
 
-  # - stage: BuildWhisper
-    # dependsOn: Deploy
-    # jobs:
-    #   - job: InstallPython
-    #     steps:
-    #       - task: UsePythonVersion@0
-    #         inputs:
-    #           versionSpec: '3.x'
-    #           addToPath: true
-    #   - job: DockerBuildWhisper
-    #     steps:
-    #       - task: Docker@2
-    #         inputs:
-    #           containerRegistry: 'whisper-azure-container-registry'
-    #           repository: 'whisper.azurecr.io/whisper-image'
-    #           command: 'buildAndPush'
-    #           Dockerfile: 'app/whisper-asr-webservice/Dockerfile'
-    #           tags: 'latest'
+  - stage: BuildWhisper
+    dependsOn: Deploy
+    jobs:
+      - job: InstallPython
+        steps:
+          - task: UsePythonVersion@0
+            inputs:
+              versionSpec: '3.x'
+              addToPath: true
+      - job: DockerBuildWhisper
+        steps:
+          - task: Docker@2
+            inputs:
+              containerRegistry: 'whisper-azure-container-registry'
+              repository: 'whisper.azurecr.io/whisper-image'
+              command: 'buildAndPush'
+              Dockerfile: 'app/whisper-asr-webservice/Dockerfile'
+              tags: 'latest'
 
   - stage: PlanWhisper
     jobs:

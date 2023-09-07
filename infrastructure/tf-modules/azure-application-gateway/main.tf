@@ -53,6 +53,7 @@ resource "azurerm_application_gateway" "this" {
     http_listener_name         = "HttpListener"
     backend_address_pool_name  = "BackendAddressPool"
     backend_http_settings_name = "myHttpSettings"
+    priority                   = 1
   }
 
   backend_address_pool {
