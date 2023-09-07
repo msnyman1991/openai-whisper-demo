@@ -10,6 +10,5 @@ inputs = {
   location             = local.env_vars.locals.region
   resource_group_name  = "networking"
   virtual_network_name = "whisper-network"
-  public_subnet_name   = "public-subnet"
   private_subnet_name  = "private-subnet"
 }

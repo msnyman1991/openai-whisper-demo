@@ -18,7 +18,6 @@ resource "azurerm_application_gateway" "this" {
   sku {
     name = "Standard_v2"
     tier = "Standard_v2"
-    # capacity = 2
   }
 
   autoscale_configuration {

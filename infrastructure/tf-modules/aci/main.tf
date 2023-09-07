@@ -7,13 +7,6 @@ resource "azurerm_resource_group" "rg" {
   location = var.resource_group_location
 }
 
-# resource "random_string" "container_name" {
-#   length  = 25
-#   lower   = true
-#   upper   = false
-#   special = false
-# }
-
 resource "azurerm_monitor_action_group" "this" {
   name                = var.whisper_monitor_actiongroup_name
   resource_group_name = azurerm_resource_group.rg.name
@@ -47,15 +40,6 @@ resource "azurerm_monitor_metric_alert" "example" {
     operator         = "GreaterThan"
     threshold        = 90
   }
-
-  # Criteria for low storage
-  # criteria {
-  #   metric_namespace = "Microsoft.ContainerInstance/containerGroups"
-  #   metric_name      = "StorageUsage"
-  #   aggregation      = "Average"
-  #   operator         = "LessThan"
-  #   threshold        = 10 # You can adjust the threshold as needed
-  # }
 
   action {
     action_group_id = azurerm_monitor_action_group.this.id

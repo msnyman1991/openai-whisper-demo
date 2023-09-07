@@ -3,8 +3,6 @@ provider "azurerm" {
   skip_provider_registration = "true"
 }
 
-provider "random" {}
-
 resource "azurerm_resource_group" "this" {
   name     = "tfstate"
   location = local.region
