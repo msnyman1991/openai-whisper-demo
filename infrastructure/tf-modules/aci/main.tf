@@ -18,7 +18,7 @@ resource "azurerm_monitor_action_group" "this" {
   name                = var.whisper_monitor_actiongroup_name
   resource_group_name = azurerm_resource_group.rg.name
 
-  short_name = var.whisper_monitor_actiongroup_name
+  short_name = var.whisper_monitor_actiongroup_short_name
   email_receiver {
     name          = var.email_receiver_name
     email_address = var.email_receiver_address

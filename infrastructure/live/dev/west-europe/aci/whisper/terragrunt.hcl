@@ -25,6 +25,7 @@ inputs = {
   private_subnet_id                = dependency.virtual_network.outputs.private_subnet_id
   public_subnet_id                 = dependency.virtual_network.outputs.public_subnet_id
   whisper_monitor_actiongroup_name = "whisper_monitor_ag"
+  whisper_monitor_actiongroup_short_name = "whisper_mag"
   email_receiver_name              = "Morne"
   email_receiver_address           = "mr.mornesnyman@gmail.com"
   whisper_monitor_alert_name       = "whisper_monitor_alerts"

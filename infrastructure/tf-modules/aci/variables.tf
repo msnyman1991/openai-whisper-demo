@@ -96,6 +96,10 @@ variable "whisper_monitor_actiongroup_name" {
   type = string
 }
 
+variable "whisper_monitor_actiongroup_short_name" {
+  type = string
+}
+
 variable "whisper_monitor_alert_name" {
   type = string
 }
