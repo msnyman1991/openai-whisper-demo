@@ -9,7 +9,7 @@ parameters:
 stages:
   - stage: Validation
     jobs:
-      - job: Validate Terraform
+      - job: ValidateTerraform
         displayName: Validate Terragrunt
         steps:
           - template: install-terraform.yaml    
