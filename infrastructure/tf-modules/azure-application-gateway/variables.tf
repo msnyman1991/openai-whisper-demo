@@ -30,9 +30,9 @@ variable "location" {
   type = string
 }
 
-variable "container_ipv4_address" {
-  type = string
-}
+# variable "container_ipv4_address" {
+#   type = string
+# }
 
 variable "private_subnet_id_ag" {
   type = string
