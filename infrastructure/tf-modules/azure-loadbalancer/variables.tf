@@ -25,3 +25,8 @@ variable "lb_backend_pool_name" {
 variable "port" {
   type = number
 }
+
+variable "loadbalancer_rule" {
+  type = string
+}
+

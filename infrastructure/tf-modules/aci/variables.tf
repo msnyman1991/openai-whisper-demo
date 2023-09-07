@@ -108,5 +108,10 @@ variable "email_receiver_address" {
   type = string
 }
 
+variable "private_subnet_id" {
+  type = string
+}
 
-
+variable "loadbalancer_rule" {
+  type = string
+}

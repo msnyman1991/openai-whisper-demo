@@ -110,7 +110,7 @@ stages:
                   cd infrastructure/live/${{ parameters.environmentName }}/$(location)/${{ infraComponent }}
                   ~/.tfenv/bin/terragrunt run-all apply --terragrunt-non-interactive -compact-warnings
 
-  - stage: DeployWhisper
+  - stage: BuildWhisper
     # dependsOn: Deploy
     jobs:
     #   - job: InstallPython
@@ -129,6 +129,8 @@ stages:
     #           Dockerfile: 'app/whisper-asr-webservice/Dockerfile'
     #           tags: 'latest'
 
+  - stage: PlanWhisper
+    jobs:
       - job: PlanWhisperACI
         # dependsOn: DockerBuildWhisper
         steps:
@@ -153,9 +155,11 @@ stages:
                   cd infrastructure/live/${{ parameters.environmentName }}/$(location)/aci/whisper
                   ~/.tfenv/bin/terragrunt plan --out=tfplan
 
+  - stage: DeployWhisper
+    jobs:
       - job: ApproveTerragrunt
         displayName: 'Terragrunt Approval'
-        dependsOn: PlanWhisperACI
+        dependsOn: PlanWhisper
         pool: server
         timeoutInMinutes: 30
         steps:

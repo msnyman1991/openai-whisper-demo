@@ -34,4 +34,5 @@ inputs = {
   loadbalancer_name      = "whisper_lb"
   lb_frontend_name       = "whisper_lb_frontend"
   lb_backend_pool_name   = "whisper_lb_backend_pool"
+  loadbalancer_rule      = "whisper_lb_rule"
 }
