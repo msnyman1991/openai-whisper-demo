@@ -12,6 +12,11 @@ include "env" {
 
 dependency "virtual_network" {
   config_path = "../../networking/virtual-network"
+  mock_outputs = {
+    private_subnet_id = "0.0.0.0"
+    public_subnet_id  = "0.0.0.0"
+  }
+  mock_outputs_allowed_terraform_commands = ["validate", "plan"]
 }
 
 inputs = {
@@ -33,7 +38,6 @@ inputs = {
   app_gateway_rg_name                 = "whisper_app_gateway_rg"
   app_gateway_public_ip_name          = "whisper_app_gateway_public_ip"
   app_gateway_name                    = "whisper_app_gateway"
-  private_subnet_id                   = dependency.virtual_network.outputs.private_subnet_id
   app_gateway_frontend_port_name      = "whisper_app_gateway_frontend_port"
   app_gateway_frontend_ip_config_name = "whisper_app_gateway_frontend_ip_config"
 }
