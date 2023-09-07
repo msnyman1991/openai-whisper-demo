@@ -50,7 +50,7 @@ resource "azurerm_application_gateway" "this" {
   request_routing_rule {
     name                       = "RequestRoutingRule"
     rule_type                  = "Basic"
-    http_listener_name         = azurerm_application_gateway.this.http_listener[0].name
+    http_listener_name         = azurerm_application_gateway.this.http_listener["HttpListener"].name
     backend_address_pool_name  = "BackendAddressPool"
     backend_http_settings_name = "myHttpSettings"
   }

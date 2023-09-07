@@ -95,3 +95,30 @@ variable "app_gateway_frontend_port_name" {
 variable "app_gateway_frontend_ip_config_name" {
   type = string
 }
+
+variable "email_receiver_address" {
+  type = string
+}
+
+variable "email_receiver_name" {
+  type = string
+}
+
+variable "whisper_monitor_actiongroup_short_name" {
+  type = string
+}
+
+variable "whisper_monitor_actiongroup_name" {
+  type = string
+}
+
+variable "whisper_monitor_alert_name" {
+  type = string
+}
+
+
+
+
+
+
+
