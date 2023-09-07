@@ -26,7 +26,7 @@ resource "azurerm_lb" "lb" {
 resource "azurerm_lb_probe" "this" {
   loadbalancer_id     = azurerm_lb.lb.id
   name                = "container-group-health-probe"
-  protocol            = "TCP"
+  protocol            = "Tcp"
   port                = var.port
   interval_in_seconds = 15
   number_of_probes    = 2

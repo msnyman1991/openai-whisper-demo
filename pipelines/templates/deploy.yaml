@@ -135,7 +135,7 @@ stages:
           - template: install-terraform.yaml 
           - ${{ each appComponent in parameters.appComponents }}:
             - task: AzureCLI@2
-              displayName: Deploy ${{ appComponent }}
+              displayName: Plan ${{ appComponent }}
               inputs:
                 azureSubscription: '$(service-connection)-${{ parameters.environmentName }}'
                 scriptType: 'bash'
