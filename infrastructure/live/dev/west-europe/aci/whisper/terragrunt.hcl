@@ -19,14 +19,14 @@ dependency "virtual_network" {
 }
 
 inputs = {
-  resource_group_name_prefix  = "whisper_rg"
-  container_group_name_prefix = "whisper_acigroup"
-  container_name_prefix       = "whisper-asr-webservice"
-  image                       = "whisper.azurecr.io/whisper.azurecr.io/whisper-image:latest"
-  port                        = "9000"
-  cpu_cores                   = "1"
-  memory_in_gb                = "2"
-  // private_subnet_id                      = dependency.virtual_network.outputs.private_subnet_id
+  resource_group_name_prefix             = "whisper_rg"
+  container_group_name_prefix            = "whisper_acigroup"
+  container_name_prefix                  = "whisper-asr-webservice"
+  image                                  = "whisper.azurecr.io/whisper.azurecr.io/whisper-image:latest"
+  port                                   = "9000"
+  cpu_cores                              = "1"
+  memory_in_gb                           = "2"
+  private_subnet_id                      = dependency.virtual_network.outputs.private_subnet_id
   private_subnet_id_ag                   = dependency.virtual_network.outputs.private_subnet_id_ag
   whisper_monitor_actiongroup_name       = "whisper_monitor_ag"
   whisper_monitor_actiongroup_short_name = "whisper_mag"
@@ -40,5 +40,4 @@ inputs = {
   app_gateway_frontend_port_name      = "whisper_app_gateway_frontend_port"
   app_gateway_frontend_ip_config_name = "whisper_app_gateway_frontend_ip_config"
   app_gateway_ip_config_name          = "whisper_app_gateway_ip_config_name"
-  dns_name_label                      = "whisper-asr-webservice"
 }

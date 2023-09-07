@@ -123,7 +123,3 @@ variable "app_gateway_frontend_port_name" {
 variable "app_gateway_frontend_ip_config_name" {
   type = string
 }
-
-variable "dns_name_label" {
-  type = string
-}

@@ -73,8 +73,7 @@ module "azurerm_application_gateway" {
   app_gateway_ip_config_name          = var.app_gateway_ip_config_name
   app_gateway_frontend_port_name      = var.app_gateway_frontend_port_name
   app_gateway_frontend_ip_config_name = var.app_gateway_frontend_ip_config_name
-  # container_ipv4_address              = azurerm_container_group.container.ip_address
-  fqdn = azurerm_container_group.container.fqdn
+  container_ipv4_address              = azurerm_container_group.container.ip_address
 
 }
 
@@ -83,7 +82,6 @@ resource "azurerm_container_group" "container" {
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
   ip_address_type     = "Private"
-  dns_name_label      = var.dns_name_label
   os_type             = "Linux"
   restart_policy      = var.restart_policy
 
@@ -105,6 +103,6 @@ resource "azurerm_container_group" "container" {
     }
   }
 
-  # subnet_ids = [var.private_subnet_id]
+  subnet_ids = [var.private_subnet_id]
 }
 

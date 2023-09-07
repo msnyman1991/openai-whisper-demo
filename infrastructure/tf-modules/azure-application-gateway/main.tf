@@ -37,8 +37,8 @@ resource "azurerm_application_gateway" "this" {
   }
 
   frontend_ip_configuration {
-    name = var.app_gateway_frontend_ip_config_name
-    # public_ip_address_id = azurerm_public_ip.this.id
+    name                 = var.app_gateway_frontend_ip_config_name
+    public_ip_address_id = azurerm_public_ip.this.id
   }
 
   http_listener {
@@ -58,9 +58,8 @@ resource "azurerm_application_gateway" "this" {
   }
 
   backend_address_pool {
-    name = "BackendAddressPool"
-    # ip_addresses = [var.container_ipv4_address]
-    fqdns = [var.fqdn]
+    name         = "BackendAddressPool"
+    ip_addresses = [var.container_ipv4_address]
   }
 
   backend_http_settings {
