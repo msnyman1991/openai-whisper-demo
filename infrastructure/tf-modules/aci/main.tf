@@ -72,6 +72,7 @@ module "azurerm_application_gateway" {
   port                                = var.port
   app_gateway_frontend_port_name      = var.app_gateway_frontend_port_name
   app_gateway_frontend_ip_config_name = var.app_gateway_frontend_ip_config_name
+  app_gateway_ip_config_name          = var.app_gateway_ip_config_name
 
 }
 
