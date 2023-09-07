@@ -10,13 +10,20 @@ stages:
   - stage: Validation
     displayName: Validate IaC
     jobs:
-      - job: Validate
+      - job: Validate Terraform
         displayName: Validate Terragrunt
         steps:
           - template: install-terraform.yaml    
           - template: validate.yaml
             parameters:
               environmentName: ${{ parameters.environmentName }}
+      - job: Pylint
+        displayName: 'Run Pylint'
+        steps:
+        - script: |
+            pip install pylint
+            pylint app/
+          displayName: 'Run Pylint'
 
   - stage: TerragruntPlan
     dependsOn: Validation
