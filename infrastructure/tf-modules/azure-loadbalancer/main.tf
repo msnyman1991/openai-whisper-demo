@@ -45,10 +45,10 @@ resource "azurerm_lb_rule" "lb_rule" {
   # resource_group_name            = azurerm_resource_group.this.name
   loadbalancer_id                = azurerm_lb.lb.id
   frontend_ip_configuration_id   = azurerm_lb.lb.frontend_ip_configuration[0].id
-  backend_address_pool_ids       = azurerm_lb.lb.backend_address_pool[0].id
+  backend_address_pool_ids       = azurerm_lb_backend_address_pool.this[0].id
   protocol                       = "Tcp"
   frontend_port                  = var.port
   backend_port                   = var.port
   probe_id                       = azurerm_lb_probe.this.id
-  frontend_ip_configuration_name = azurerm_lb.lb.frontend_ip_configuration.name
+  frontend_ip_configuration_name = azurerm_lb.lb.frontend_ip_configuration[0].name
 }
