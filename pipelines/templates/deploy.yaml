@@ -44,7 +44,7 @@ stages:
       #           ~/.tfenv/bin/terraform apply -auto-approve
                 
       - job: PlanTerragrunt
-        dependsOn: BootstrapTerragrunt
+        # dependsOn: BootstrapTerragrunt
         steps:
           - template: install-terraform.yaml
           - ${{ each infraComponent in parameters.infraComponents }}:
