@@ -91,3 +91,22 @@ variable "lb_frontend_name" {
 variable "lb_backend_pool_name" {
   type = string
 }
+
+variable "whisper_monitor_actiongroup_name" {
+  type = string
+}
+
+variable "whisper_monitor_alert_name" {
+  type = string
+}
+
+variable "email_receiver_name" {
+  type = string
+}
+
+variable "email_receiver_address" {
+  type = string
+}
+
+
+

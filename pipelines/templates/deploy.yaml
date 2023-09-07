@@ -69,7 +69,7 @@ stages:
                   cd infrastructure/live/${{ parameters.environmentName }}/$(location)/${{ infraComponent }}
                   ~/.tfenv/bin/terragrunt run-all plan --out=tfplan --terragrunt-non-interactive -compact-warnings
 
-  - stage: Deploy
+  - stage: DeployInfra
     dependsOn: TerragruntPlan
     jobs:
       - job: ApproveTerragrunt
