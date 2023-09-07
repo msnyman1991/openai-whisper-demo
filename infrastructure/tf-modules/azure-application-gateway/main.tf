@@ -15,9 +15,9 @@ resource "azurerm_application_gateway" "this" {
   resource_group_name = azurerm_resource_group.this.name
   location            = azurerm_resource_group.this.location
   sku {
-    name     = "Standard_v2"
-    tier     = "Standard_v2"
-    capacity = 2
+    name = "Standard_v2"
+    tier = "Standard_v2"
+    # capacity = 2
   }
 
   autoscale_configuration {
