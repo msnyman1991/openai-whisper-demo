@@ -13,8 +13,8 @@ include "env" {
 dependency "virtual_network" {
   config_path = "../../networking/virtual-network"
   mock_outputs = {
-    private_subnet_id = "0.0.0.0"
-    public_subnet_id  = "0.0.0.0"
+    private_subnet_id = "/subscriptions/mock_subscription_id/resourceGroups/mock_resource_group_name/providers/Microsoft.Network/virtualNetworks/mock_virtual_network_name/subnets/mock_subnet_name"
+    public_subnet_id  = "/subscriptions/mock_subscription_id/resourceGroups/mock_resource_group_name/providers/Microsoft.Network/virtualNetworks/mock_virtual_network_name/subnets/mock_subnet_name"
   }
   mock_outputs_allowed_terraform_commands = ["validate", "plan"]
 }
