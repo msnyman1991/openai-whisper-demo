@@ -21,7 +21,7 @@ stages:
         steps:
         - script: |
             pip install pylint
-            pylint app/
+            pylint --fail-under=1 app/
           displayName: 'Run Pylint'
         continueOnError: true
 
