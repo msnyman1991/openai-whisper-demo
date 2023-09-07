@@ -10,12 +10,8 @@ variable "app_gateway_name" {
   type = string
 }
 
-variable "private_subnet_id" {
+variable "app_gateway_ip_config_name" {
   type = string
-}
-
-variable "port" {
-  type = number
 }
 
 variable "app_gateway_frontend_port_name" {
@@ -26,11 +22,15 @@ variable "app_gateway_frontend_ip_config_name" {
   type = string
 }
 
-variable "location" {
+variable "private_subnet_id" {
   type = string
 }
 
-variable "app_gateway_ip_config_name" {
+variable "port" {
+  type = number
+}
+
+variable "location" {
   type = string
 }
 
