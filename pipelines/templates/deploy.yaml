@@ -79,7 +79,7 @@ stages:
           - task: CopyFiles@2
             displayName: Copy Terragrunt Plan files
             inputs:
-              SourceFolder: infrastructure/live/${{ parameters.environmentName }}
+              SourceFolder: infrastructure/live/
               Contents: |
                 **/*.tf
                 **/*.tfvars
