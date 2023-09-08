@@ -17,7 +17,8 @@ This Azure DevOps pipeline comprises several stages:
 4. Terragrunt Approve: If the Terragrunt plan is accurate, an authorized user can grant approval.
 5. DeployInfra: This stage is responsible for deploying the infrastructure.
 6. BuildWhisper: It involves building a Docker image for the Whisper ASR Webservice and then pushing this image to the Azure Container Repository.
-7. Deploy Whisper: Finally, this stage deploys the Azure Container Instance Group using the Whisper ASR Webservice Docker image from ACR, in conjunction with the Application Gateway.
+7. PlanWhisper - Here, a Terragrunt plan is executed for application infrastructure deployment.
+8. Deploy Whisper: Finally, this stage deploys the Azure Container Instance Group using the Whisper ASR Webservice Docker image from ACR, in conjunction with the Application Gateway.
 
 # To Do
 * Implement AutoScaling for Azure Container Instance Group, possibly using Azure Functions and Azure Monitor
