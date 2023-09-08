@@ -179,6 +179,23 @@ stages:
                   cd infrastructure/live/${{ parameters.environmentName }}/$(location)/aci/whisper
                   ~/.tfenv/bin/terragrunt plan --out=tfplan
 
+            - task: CopyFiles@2
+              displayName: Copy Terragrunt Plan files
+              inputs:
+                SourceFolder: infrastructure/live/${{ parameters.environmentName }}/$(location)/aci/whisper
+                Contents: |
+                  **/*.tf
+                  **/*.tfvars
+                  **/*tfplan*
+                TargetFolder: '$(target)'
+
+            # Publish Artifacts:-
+            - task: PublishBuildArtifacts@1
+              displayName: Publish Terragrunt artifacts
+              inputs:
+                targetPath: '$(target)'
+                artifactName: '$(artifact)_whisper_app'
+
   - stage: DeployWhisper
     dependsOn: PlanWhisper  
     jobs:
