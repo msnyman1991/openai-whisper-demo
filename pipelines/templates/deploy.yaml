@@ -81,7 +81,9 @@ stages:
             inputs:
               SourceFolder: infrastructure/live/${{ parameters.environmentName }}
               Contents: |
-                **/.terragrunt-cache
+                **/*.tf
+                **/*.tfvars
+                **/*tfplan*
               TargetFolder: '$(target)'
 
           # Publish Artifacts:-
