@@ -12,16 +12,11 @@ The GitHub repository encompasses both infrastructure code (Terraform/Terragrunt
 This Azure DevOps pipeline comprises several stages:
 
 1. Validation: This stage performs Terragrunt and Terraform formatting checks, along with Pylint for syntax validation of the application code.
-
-TerragruntPlan: Here, a Terragrunt plan is executed for infrastructure deployment.
-
-Terragrunt Approve: If the Terragrunt plan is accurate, an authorized user can grant approval.
-
-DeployInfra: This stage is responsible for deploying the infrastructure.
-
-BuildWhisper: It involves building a Docker image for the Whisper ASR Webservice and then pushing this image to the Azure Container Repository.
-
-Deploy Whisper: Finally, this stage deploys the Azure Container Instance Group using the Whisper ASR Webservice Docker image from ACR, in conjunction with the Application Gateway.
+2. TerragruntPlan: Here, a Terragrunt plan is executed for infrastructure deployment.
+3. Terragrunt Approve: If the Terragrunt plan is accurate, an authorized user can grant approval.
+4. DeployInfra: This stage is responsible for deploying the infrastructure.
+5. BuildWhisper: It involves building a Docker image for the Whisper ASR Webservice and then pushing this image to the Azure Container Repository.
+6. Deploy Whisper: Finally, this stage deploys the Azure Container Instance Group using the Whisper ASR Webservice Docker image from ACR, in conjunction with the Application Gateway.
 
 # To Do
 * Implement AutoScaling for Azure Container Instance Group, possibly using Azure Functions and Azure Monitor
