@@ -26,5 +26,6 @@ This Azure DevOps pipeline comprises several stages:
 * Implement additional testing for application code during Build and Deploy stage in the Azure DevOps pipeline
 * Do a complete security audit of the implementation
 * Investigate using other Azure Container Services such as AKS
+ 
 
-Remove later
+ Remove me
