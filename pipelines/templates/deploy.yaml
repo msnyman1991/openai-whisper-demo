@@ -76,22 +76,22 @@ stages:
                   cd infrastructure/live/${{ parameters.environmentName }}/$(location)/${{ infraComponent }}
                   ~/.tfenv/bin/terragrunt run-all plan --out=tfplan --terragrunt-non-interactive -compact-warnings
 
-          - task: CopyFiles@2
-            displayName: Copy Terragrunt Plan files
-            inputs:
-              SourceFolder: infrastructure/live/${{ parameters.environmentName }}/$(location)/${{ infraComponent }}
-              Contents: |
-                **/*.tf
-                **/*.tfvars
-                **/*tfplan*
-              TargetFolder: '$(target)'
+            - task: CopyFiles@2
+              displayName: Copy Terragrunt Plan files
+              inputs:
+                SourceFolder: infrastructure/live/${{ parameters.environmentName }}/$(location)/${{ infraComponent }}
+                Contents: |
+                  **/*.tf
+                  **/*.tfvars
+                  **/*tfplan*
+                TargetFolder: '$(target)'
 
-          # Publish Artifacts:-
-          - task: PublishBuildArtifacts@1
-            displayName: Publish Terragrunt artifacts
-            inputs:
-              targetPath: '$(target)'
-              artifactName: '$(artifact)'
+            # Publish Artifacts:-
+            - task: PublishBuildArtifacts@1
+              displayName: Publish Terragrunt artifacts
+              inputs:
+                targetPath: '$(target)'
+                artifactName: '$(artifact)'
 
   - stage: DeployInfra
     dependsOn: TerragruntPlan
