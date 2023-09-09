@@ -11,11 +11,22 @@ resource "azurerm_service_plan" "this" {
   sku_name            = "Y1"
 }
 
+resource "azurerm_storage_account" "this" {
+  name                     = "linuxfunctionappsawhisper"
+  resource_group_name      = azurerm_resource_group.this.name
+  location                 = azurerm_resource_group.this.location
+  account_tier             = "Standard"
+  account_replication_type = "LRS"
+}
+
 resource "azurerm_linux_function_app" "this" {
-  name                = "scale-container-instances"
-  location            = azurerm_resource_group.this.location
-  resource_group_name = azurerm_resource_group.this.name
-  service_plan_id     = azurerm_service_plan.this.id
+  name                       = "scale-container-instances"
+  location                   = azurerm_resource_group.this.location
+  resource_group_name        = azurerm_resource_group.this.name
+  service_plan_id            = azurerm_service_plan.this.id
+  storage_account_name       = azurerm_storage_account.this.name
+  storage_account_access_key = azurerm_storage_account.this.primary_access_key
+
 
   app_settings = {
     "FUNCTIONS_EXTENSION_VERSION" = "~3"
@@ -67,7 +78,7 @@ resource "azurerm_linux_function_app" "this" {
      EOT
   }
   site_config {
-    linux_fx_version = "python|3.9"
+    # linux_fx_version = "python|3.9"
   }
 }
 
