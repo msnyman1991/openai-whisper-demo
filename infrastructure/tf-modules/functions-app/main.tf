@@ -12,7 +12,7 @@ resource "azurerm_service_plan" "this" {
 }
 
 resource "azurerm_storage_account" "this" {
-  name                     = "linuxfunctionappsawhisper"
+  name                     = "linuxfunctionappsawhispr"
   resource_group_name      = azurerm_resource_group.this.name
   location                 = azurerm_resource_group.this.location
   account_tier             = "Standard"
