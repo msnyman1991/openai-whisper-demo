@@ -7,12 +7,10 @@ resource "azurerm_app_service_plan" "this" {
   name                = "scalecontainerinstances"
   location            = azurerm_resource_group.this.location
   resource_group_name = azurerm_resource_group.this.name
-  kind                = "FunctionApp"
-  reserved            = true
 
   sku {
-    tier = "Dynamic"
-    size = "Y1"
+    tier = "Standard"
+    size = "S1"
   }
 }
 
@@ -20,10 +18,9 @@ resource "azurerm_linux_function_app" "this" {
   name                = "scale-container-instances"
   location            = azurerm_resource_group.this.location
   resource_group_name = azurerm_resource_group.this.name
-  app_service_plan_id = azurerm_app_service_plan.this.id
-  os_type             = "Linux"
-  runtime_stack       = "python"
-  runtime_version     = "3.9"
+  service_plan_id     = azurerm_app_service_plan.this.id
+  os_type             = "linux"
+  version             = "~3"
 
   app_settings = {
     "FUNCTIONS_EXTENSION_VERSION" = "~3"
@@ -73,6 +70,9 @@ resource "azurerm_linux_function_app" "this" {
 
          return func.HttpResponse("Container instance created successfully.")
      EOT
+  }
+  site_config {
+    linux_fx_version = "python|3.9"
   }
 }
 
