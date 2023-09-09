@@ -3,24 +3,19 @@ resource "azurerm_resource_group" "this" {
   location = var.location
 }
 
-resource "azurerm_app_service_plan" "this" {
-  name                = "scalecontainerinstances"
-  location            = azurerm_resource_group.this.location
+resource "azurerm_service_plan" "this" {
+  name                = "example-app-service-plan"
   resource_group_name = azurerm_resource_group.this.name
-
-  sku {
-    tier = "Standard"
-    size = "S1"
-  }
+  location            = azurerm_resource_group.this.location
+  os_type             = "Linux"
+  sku_name            = "Y1"
 }
 
 resource "azurerm_linux_function_app" "this" {
   name                = "scale-container-instances"
   location            = azurerm_resource_group.this.location
   resource_group_name = azurerm_resource_group.this.name
-  service_plan_id     = azurerm_app_service_plan.this.id
-  os_type             = "linux"
-  version             = "~3"
+  service_plan_id     = azurerm_service_plan.this.id
 
   app_settings = {
     "FUNCTIONS_EXTENSION_VERSION" = "~3"
