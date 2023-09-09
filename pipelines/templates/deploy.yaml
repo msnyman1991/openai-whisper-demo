@@ -196,9 +196,9 @@ stages:
   #               targetPath: '$(target)'
   #               artifactName: '$(artifact)_whisper_app'
 
-  # - stage: DeployWhisper
+  - stage: DeployWhisper
   #   dependsOn: PlanWhisper  
-  #   jobs:
+    jobs:
   #     - job: ApproveTerragrunt
   #       displayName: 'Terragrunt Approval'
   #       pool: server
