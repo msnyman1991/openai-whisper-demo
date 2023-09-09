@@ -29,9 +29,12 @@ resource "azurerm_linux_function_app" "this" {
 
 
   app_settings = {
-    "FUNCTIONS_EXTENSION_VERSION" = "~3"
-    "FUNCTIONS_WORKER_RUNTIME"    = "python"
-    "MY_FUNCTION_CODE"            = <<-EOT
+    "FUNCTIONS_EXTENSION_VERSION"                     = "~4"
+    "FUNCTIONS_WORKER_RUNTIME"                        = "python"
+    "AzureFunctionsJobHost__version"                  = "2.0"
+    "AzureFunctionsJobHost__extensionBundle__id"      = "Microsoft.Azure.Functions.ExtensionBundle"
+    "AzureFunctionsJobHost__extensionBundle__version" = "[3.*, 4.0.0)"
+    "MY_FUNCTION_CODE"                                = <<-EOT
      import azure.functions as func
      from azure.identity import DefaultAzureCredential
      from azure.mgmt.containerinstance import ContainerInstanceManagementClient
@@ -78,7 +81,9 @@ resource "azurerm_linux_function_app" "this" {
      EOT
   }
   site_config {
-    # linux_fx_version = "python|3.9"
+    application_stack {
+      python_version = "3.9"
+    }
   }
 }
 
