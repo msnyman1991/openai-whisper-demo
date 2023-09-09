@@ -34,7 +34,7 @@ resource "azurerm_linux_function_app" "this" {
      def main(req: func.HttpRequest) -> func.HttpResponse:
          # Authenticate using Azure AD credentials or other supported methods
          credential = DefaultAzureCredential()
-         aci_client = ContainerInstanceManagementClient(credential, "<Azure-Subscription-ID>")
+         aci_client = ContainerInstanceManagementClient(credential, "afad4717-6a47-4784-93ed-1c7992b70984")
 
          container_group_name = "whisper_acigroup"
          container_name = "whisper-1"
