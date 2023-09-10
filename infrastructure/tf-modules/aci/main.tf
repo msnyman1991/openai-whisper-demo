@@ -61,10 +61,10 @@ module "azurerm_application_gateway" {
 
 }
 
-module "function" {
-  source   = "../functions-app"
-  location = var.location
-}
+# module "function" {
+#   source   = "../functions-app"
+#   location = var.location
+# }
 
 resource "azurerm_container_group" "container" {
   name                = var.container_group_name_prefix
