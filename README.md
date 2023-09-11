@@ -27,11 +27,6 @@ This Azure DevOps pipeline comprises several stages:
 * Implement additional testing for application code during Build and Deploy stage in the Azure DevOps pipeline
 * Do a complete security audit of the implementation
 * Investigate using other Azure Container Services such as AKS
-<<<<<<< HEAD
- 
-
- Remove me
-=======
 * Create separate repository for Terraform modules
 * Investigate using existing community Terraform modules
->>>>>>> 59797f6eee163990d258ec73eeca099b9392c60b
+
