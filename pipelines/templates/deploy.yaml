@@ -7,211 +7,188 @@ parameters:
     type: object
 
 stages:
-  # - stage: Validation
-  #   jobs:
-  #     - job: ValidateTerraform
-  #       displayName: Validate Terragrunt
-  #       steps:
-  #         - template: install-terraform.yaml    
-  #         - template: validate.yaml
-  #           parameters:
-  #             environmentName: ${{ parameters.environmentName }}
-  #     - job: Pylint
-  #       displayName: 'Run Pylint'
-  #       steps:
-  #       - script: |
-  #           pip install pylint
-  #           pylint --fail-under=1 app/
-  #         displayName: 'Run Pylint'
-  #       continueOnError: true
+  - stage: Validation
+    jobs:
+      - job: ValidateTerraform
+        displayName: Validate Terragrunt
+        steps:
+          - template: install-terraform.yaml    
+          - template: validate.yaml
+            parameters:
+              environmentName: ${{ parameters.environmentName }}
+      - job: Pylint
+        displayName: 'Run Pylint'
+        steps:
+        - script: |
+            pip install pylint
+            pylint --fail-under=1 app/
+          displayName: 'Run Pylint'
+        continueOnError: true
 
-  # - stage: TerragruntPlan
-  #   dependsOn: Validation
-  #   jobs:
-      # - job: BootstrapTerragrunt
-      #   steps:
-      #     - template: install-terraform.yaml
-      #     - task: AzureCLI@2
-      #       inputs:
-      #         azureSubscription: '$(service-connection)-${{ parameters.environmentName }}'
-      #         scriptType: 'bash'
-      #         addSpnToEnvironment: true
-      #         scriptLocation: 'inlineScript'
-      #         inlineScript: |
-      #           subscriptionId=$(az account show --query "id" -o tsv)
+  - stage: TerragruntPlan
+    dependsOn: Validation
+    jobs:       
+      - job: PlanTerragrunt
+        steps:
+          - template: install-terraform.yaml
+          - ${{ each infraComponent in parameters.infraComponents }}:
+            - task: AzureCLI@2
+              displayName: Plan ${{ infraComponent }}
+              inputs:
+                azureSubscription: '$(service-connection)-${{ parameters.environmentName }}'
+                scriptType: 'bash'
+                addSpnToEnvironment: true
+                scriptLocation: 'inlineScript'
+                inlineScript: |
+                  subscriptionId=$(az account show --query "id" -o tsv)
 
-      #           export ARM_CLIENT_ID=$servicePrincipalId
-      #           export ARM_CLIENT_SECRET=$servicePrincipalKey
-      #           export ARM_TENANT_ID=$tenantId
-      #           export ARM_SUBSCRIPTION_ID=$subscriptionId
+                  export ARM_CLIENT_ID=$servicePrincipalId
+                  export ARM_CLIENT_SECRET=$servicePrincipalKey
+                  export ARM_TENANT_ID=$tenantId
+                  export ARM_SUBSCRIPTION_ID=$subscriptionId
 
-      #           echo "##### TERRGRUNT Bootstrap #####"
-      #           cd tf-bootstrap
-      #           ~/.tfenv/bin/terraform init
-      #           ~/.tfenv/bin/terraform apply -auto-approve
-                
-  #     - job: PlanTerragrunt
-  #       # dependsOn: BootstrapTerragrunt
-  #       steps:
-  #         - template: install-terraform.yaml
-  #         - ${{ each infraComponent in parameters.infraComponents }}:
-  #           - task: AzureCLI@2
-  #             displayName: Plan ${{ infraComponent }}
-  #             inputs:
-  #               azureSubscription: '$(service-connection)-${{ parameters.environmentName }}'
-  #               scriptType: 'bash'
-  #               addSpnToEnvironment: true
-  #               scriptLocation: 'inlineScript'
-  #               inlineScript: |
-  #                 subscriptionId=$(az account show --query "id" -o tsv)
+                  echo "##### TERRGRUNT Plan ALL #####"
+                  ## Clear Terragrunt cache
+                  find infrastructure/ -type d -name '.terragrunt-cache' -prune -exec rm -rf {} +
+                  cd infrastructure/live/${{ parameters.environmentName }}/$(location)/${{ infraComponent }}
+                  ~/.tfenv/bin/terragrunt run-all plan --out=tfplan --terragrunt-non-interactive -compact-warnings
 
-  #                 export ARM_CLIENT_ID=$servicePrincipalId
-  #                 export ARM_CLIENT_SECRET=$servicePrincipalKey
-  #                 export ARM_TENANT_ID=$tenantId
-  #                 export ARM_SUBSCRIPTION_ID=$subscriptionId
+            - task: CopyFiles@2
+              displayName: Copy Terragrunt Plan files
+              inputs:
+                SourceFolder: infrastructure/live/${{ parameters.environmentName }}/$(location)/${{ infraComponent }}
+                Contents: |
+                  **/*.tf
+                  **/*.tfvars
+                  **/*tfplan*
+                TargetFolder: '$(target)'
 
-  #                 echo "##### TERRGRUNT Plan ALL #####"
-  #                 ## Clear Terragrunt cache
-  #                 find infrastructure/ -type d -name '.terragrunt-cache' -prune -exec rm -rf {} +
-  #                 cd infrastructure/live/${{ parameters.environmentName }}/$(location)/${{ infraComponent }}
-  #                 ~/.tfenv/bin/terragrunt run-all plan --out=tfplan --terragrunt-non-interactive -compact-warnings
+            # Publish Artifacts:-
+            - task: PublishBuildArtifacts@1
+              displayName: Publish Terragrunt artifacts
+              inputs:
+                targetPath: '$(target)'
+                artifactName: '$(artifact)'
 
-  #           - task: CopyFiles@2
-  #             displayName: Copy Terragrunt Plan files
-  #             inputs:
-  #               SourceFolder: infrastructure/live/${{ parameters.environmentName }}/$(location)/${{ infraComponent }}
-  #               Contents: |
-  #                 **/*.tf
-  #                 **/*.tfvars
-  #                 **/*tfplan*
-  #               TargetFolder: '$(target)'
-
-  #           # Publish Artifacts:-
-  #           - task: PublishBuildArtifacts@1
-  #             displayName: Publish Terragrunt artifacts
-  #             inputs:
-  #               targetPath: '$(target)'
-  #               artifactName: '$(artifact)'
-
-  # - stage: DeployInfra
-  #   dependsOn: TerragruntPlan
-  #   jobs:
-  #     - job: ApproveTerragrunt
-  #       displayName: 'Terragrunt Approval'
-  #       pool: server
-  #       timeoutInMinutes: 30
-  #       steps:
-  #         - task: ManualValidation@0
-  #           timeoutInMinutes: 30
-  #           inputs:
-  #             instructions: 'Terragrunt will need approval'
-  #             onTimeout: 'reject'
+  - stage: DeployInfra
+    dependsOn: TerragruntPlan
+    jobs:
+      - job: ApproveTerragrunt
+        displayName: 'Terragrunt Approval'
+        pool: server
+        timeoutInMinutes: 30
+        steps:
+          - task: ManualValidation@0
+            timeoutInMinutes: 30
+            inputs:
+              instructions: 'Terragrunt will need approval'
+              onTimeout: 'reject'
     
-  #     - job: TerragruntApply
-  #       displayName: 'Terragrunt Apply'
-  #       dependsOn: ApproveTerragrunt
-  #       steps:
-  #         - template: install-terraform.yaml
-  #         - ${{ each infraComponent in parameters.infraComponents }}:
-  #           - task: AzureCLI@2
-  #             displayName: Apply ${{ infraComponent }}
-  #             inputs:
-  #               azureSubscription: '$(service-connection)-${{ parameters.environmentName }}'
-  #               scriptType: 'bash'
-  #               addSpnToEnvironment: true
-  #               scriptLocation: 'inlineScript'
-  #               inlineScript: |
-  #                 subscriptionId=$(az account show --query "id" -o tsv)
+      - job: TerragruntApply
+        displayName: 'Terragrunt Apply'
+        dependsOn: ApproveTerragrunt
+        steps:
+          - template: install-terraform.yaml
+          - ${{ each infraComponent in parameters.infraComponents }}:
+            - task: AzureCLI@2
+              displayName: Apply ${{ infraComponent }}
+              inputs:
+                azureSubscription: '$(service-connection)-${{ parameters.environmentName }}'
+                scriptType: 'bash'
+                addSpnToEnvironment: true
+                scriptLocation: 'inlineScript'
+                inlineScript: |
+                  subscriptionId=$(az account show --query "id" -o tsv)
 
-  #                 export ARM_CLIENT_ID=$servicePrincipalId
-  #                 export ARM_CLIENT_SECRET=$servicePrincipalKey
-  #                 export ARM_TENANT_ID=$tenantId
-  #                 export ARM_SUBSCRIPTION_ID=$subscriptionId
+                  export ARM_CLIENT_ID=$servicePrincipalId
+                  export ARM_CLIENT_SECRET=$servicePrincipalKey
+                  export ARM_TENANT_ID=$tenantId
+                  export ARM_SUBSCRIPTION_ID=$subscriptionId
 
-  #                 echo "##### TERRGRUNT Apply ALL #####"
-  #                 ## Clear Terragrunt cache
-  #                 find infrastructure/ -type d -name '.terragrunt-cache' -prune -exec rm -rf {} +
-  #                 cd infrastructure/live/${{ parameters.environmentName }}/$(location)/${{ infraComponent }}
-  #                 ~/.tfenv/bin/terragrunt run-all apply --terragrunt-non-interactive -compact-warnings
+                  echo "##### TERRGRUNT Apply ALL #####"
+                  ## Clear Terragrunt cache
+                  find infrastructure/ -type d -name '.terragrunt-cache' -prune -exec rm -rf {} +
+                  cd infrastructure/live/${{ parameters.environmentName }}/$(location)/${{ infraComponent }}
+                  ~/.tfenv/bin/terragrunt run-all apply --terragrunt-non-interactive -compact-warnings
 
-  # - stage: BuildWhisper
-  #   dependsOn: DeployInfra
-  #   jobs:
-  #     - job: InstallPython
-  #       steps:
-  #         - task: UsePythonVersion@0
-  #           inputs:
-  #             versionSpec: '3.x'
-  #             addToPath: true
-  #     - job: DockerBuildWhisper
-  #       steps:
-  #         - task: Docker@2
-  #           inputs:
-  #             containerRegistry: 'whisper-azure-container-registry'
-  #             repository: 'whisper.azurecr.io/whisper-image'
-  #             command: 'buildAndPush'
-  #             Dockerfile: 'app/whisper-asr-webservice/Dockerfile'
-  #             tags: 'latest'
+  - stage: BuildWhisper
+    dependsOn: DeployInfra
+    jobs:
+      - job: InstallPython
+        steps:
+          - task: UsePythonVersion@0
+            inputs:
+              versionSpec: '3.x'
+              addToPath: true
+      - job: DockerBuildWhisper
+        steps:
+          - task: Docker@2
+            inputs:
+              containerRegistry: 'whisper-azure-container-registry'
+              repository: 'whisper.azurecr.io/whisper-image'
+              command: 'buildAndPush'
+              Dockerfile: 'app/whisper-asr-webservice/Dockerfile'
+              tags: 'latest'
 
-  # - stage: PlanWhisper
-  #   jobs:
-  #     - job: PlanWhisperACI
-  #       # dependsOn: BuildWhisper
-  #       steps:
-  #         - template: install-terraform.yaml 
-  #         - ${{ each appComponent in parameters.appComponents }}:
-  #           - task: AzureCLI@2
-  #             displayName: Plan ${{ appComponent }}
-  #             inputs:
-  #               azureSubscription: '$(service-connection)-${{ parameters.environmentName }}'
-  #               scriptType: 'bash'
-  #               addSpnToEnvironment: true
-  #               scriptLocation: 'inlineScript'
-  #               inlineScript: |
-  #                 subscriptionId=$(az account show --query "id" -o tsv)
+  - stage: PlanWhisper
+    jobs:
+      - job: PlanWhisperACI
+        dependsOn: BuildWhisper
+        steps:
+          - template: install-terraform.yaml 
+          - ${{ each appComponent in parameters.appComponents }}:
+            - task: AzureCLI@2
+              displayName: Plan ${{ appComponent }}
+              inputs:
+                azureSubscription: '$(service-connection)-${{ parameters.environmentName }}'
+                scriptType: 'bash'
+                addSpnToEnvironment: true
+                scriptLocation: 'inlineScript'
+                inlineScript: |
+                  subscriptionId=$(az account show --query "id" -o tsv)
 
-  #                 export ARM_CLIENT_ID=$servicePrincipalId
-  #                 export ARM_CLIENT_SECRET=$servicePrincipalKey
-  #                 export ARM_TENANT_ID=$tenantId
-  #                 export ARM_SUBSCRIPTION_ID=$subscriptionId
+                  export ARM_CLIENT_ID=$servicePrincipalId
+                  export ARM_CLIENT_SECRET=$servicePrincipalKey
+                  export ARM_TENANT_ID=$tenantId
+                  export ARM_SUBSCRIPTION_ID=$subscriptionId
 
 
-  #                 cd infrastructure/live/${{ parameters.environmentName }}/$(location)/aci/whisper
-  #                 ~/.tfenv/bin/terragrunt plan --out=tfplan
+                  cd infrastructure/live/${{ parameters.environmentName }}/$(location)/aci/whisper
+                  ~/.tfenv/bin/terragrunt plan --out=tfplan
 
-  #           - task: CopyFiles@2
-  #             displayName: Copy Terragrunt Plan files
-  #             inputs:
-  #               SourceFolder: infrastructure/live/${{ parameters.environmentName }}/$(location)/aci/whisper
-  #               Contents: |
-  #                 **/*.tf
-  #                 **/*.tfvars
-  #                 **/*tfplan*
-  #               TargetFolder: '$(target)'
+            - task: CopyFiles@2
+              displayName: Copy Terragrunt Plan files
+              inputs:
+                SourceFolder: infrastructure/live/${{ parameters.environmentName }}/$(location)/aci/whisper
+                Contents: |
+                  **/*.tf
+                  **/*.tfvars
+                  **/*tfplan*
+                TargetFolder: '$(target)'
 
-  #           # Publish Artifacts:-
-  #           - task: PublishBuildArtifacts@1
-  #             displayName: Publish Terragrunt artifacts
-  #             inputs:
-  #               targetPath: '$(target)'
-  #               artifactName: '$(artifact)_whisper_app'
+            # Publish Artifacts:-
+            - task: PublishBuildArtifacts@1
+              displayName: Publish Terragrunt artifacts
+              inputs:
+                targetPath: '$(target)'
+                artifactName: '$(artifact)_whisper_app'
 
   - stage: DeployWhisper
-  #   dependsOn: PlanWhisper  
+    dependsOn: PlanWhisper  
     jobs:
-  #     - job: ApproveTerragrunt
-  #       displayName: 'Terragrunt Approval'
-  #       pool: server
-  #       timeoutInMinutes: 30
-  #       steps:
-  #         - task: ManualValidation@0
-  #           timeoutInMinutes: 30
-  #           inputs:
-  #             instructions: 'Terragrunt will need approval'
-  #             onTimeout: 'reject'
+      - job: ApproveTerragrunt
+        displayName: 'Terragrunt Approval'
+        pool: server
+        timeoutInMinutes: 30
+        steps:
+          - task: ManualValidation@0
+            timeoutInMinutes: 30
+            inputs:
+              instructions: 'Terragrunt will need approval'
+              onTimeout: 'reject'
 
       - job: DeployWhisperACI
-        # dependsOn: ApproveTerragrunt
+        dependsOn: ApproveTerragrunt
         steps:
           - template: install-terraform.yaml 
           - ${{ each appComponent in parameters.appComponents }}:
